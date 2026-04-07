@@ -53,8 +53,8 @@ app.use((req, res, next) => {
 // Routes
 app.get('/', async (req, res) => {
     const courses = await getCourses();
-    res.render('index', { 
-        title: 'Home', 
+    res.render('index', {
+        title: 'Home',
         currentPage: 'home',
         courses: courses.slice(0, 3) // Show first 3 for popular section
     });
@@ -65,10 +65,10 @@ app.get('/about', (req, res) => {
 });
 app.get('/terms', async (req, res) => {
     const courses = await getCourses();
-    res.render('terms-conditions', { 
-        title: 'Terms and Conditions', 
+    res.render('terms-conditions', {
+        title: 'Terms and Conditions',
         currentPage: 'terms',
-        courses: courses.slice(0, 3) 
+        courses: courses.slice(0, 3)
     });
 });
 
@@ -110,10 +110,10 @@ app.get('/payment', (req, res) => {
     res.render('payment', { title: 'Payment', course, price });
 });
 
-app.get('/all-courses', async (req, res) => {
+app.get('/courses', async (req, res) => {
     const courses = await getCourses();
-    res.render('all-courses', { 
-        title: 'All Courses', 
+    res.render('courses', {
+        title: 'All Courses',
         currentPage: 'courses',
         courses: courses
     });
@@ -128,15 +128,15 @@ app.get('/course/:id', async (req, res) => {
     const { id } = req.params;
     const courses = await getCourses();
     const course = Array.isArray(courses) ? courses.find(c => c.id === id) : Object.values(courses).find(c => c.id === id);
-    
+
     if (!course) {
         return res.status(404).render('404', { title: 'Course Not Found', currentPage: '404' });
     }
-    
-    res.render('course-details', { 
-        title: course.name, 
+
+    res.render('course-details', {
+        title: course.name,
         currentPage: 'courses',
-        course 
+        course
     });
 });
 

@@ -24,7 +24,7 @@
 
     <!-- Libraries Stylesheet -->
     <link href="/lib/animate/animate.min.css" rel="stylesheet">
-    <link href="/lib/owlLearnora/assets/owl.Learnora.min.css" rel="stylesheet">
+    <link href="/lib/owlboolene/assets/owl.boolene.min.css" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
@@ -34,18 +34,10 @@
 </head>
 
 <body>
-    <!-- Spinner Start -->
-    <div id="spinner"
-        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div>
-    <!-- Spinner End -->
 
 
     <!-- Navbar Start -->
-    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+    <nav class="navbar navbar-expand-xl bg-white navbar-light shadow sticky-top p-0">
         <a href="/" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
             <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>Learnora-acadamy</h2>
         </a>
@@ -53,14 +45,81 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav ms-auto p-4 p-lg-0">
+            <div class="navbar-nav ms-auto p-4 p-xl-0">
                 <a href="/" class="nav-item nav-link <%= currentPage === 'home' ? 'active' : '' %>">Home</a>
                 <a href="/about" class="nav-item nav-link <%= currentPage === 'about' ? 'active' : '' %>">About</a>
                 <a href="/courses" class="nav-item nav-link <%= currentPage === 'courses' ? 'active' : '' %>">Courses</a>
                 <a href="/contact" class="nav-item nav-link <%= currentPage === 'contact' ? 'active' : '' %>">Contact</a>
             </div>
-            <a href="/auth" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Join Now<i
-                    class="fa fa-arrow-right ms-3"></i></a>
+            <div id="nav-auth-buttons" class="px-4 px-xl-0 pb-4 pb-xl-0">
+                <!-- Join Now Button -->
+                <a href="/auth" id="join-now-btn" class="btn btn-primary py-2 py-xl-4 px-lg-5 d-block">Join Now<i
+                        class="fa fa-arrow-right ms-3"></i></a>
+                
+                <!-- Dashboard Button -->
+                <a href="/dashboard" id="dashboard-btn" class="btn btn-primary py-2 py-xl-4 px-lg-5 d-block" style="display: none !important;">Dashboard<i
+                        class="fa fa-user ms-3"></i></a>
+            </div>
         </div>
     </nav>
     <!-- Navbar End -->
+
+    <!-- Firebase SDK (v9 compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <script>
+        (function() {
+            // Configuration injected from the server
+            const firebaseConfig = <%- JSON.stringify(firebaseConfig) %>;
+            
+            // Initialize Firebase if not already initialized
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            
+            const auth = firebase.auth();
+            const joinBtn = document.getElementById('join-now-btn');
+            const dashBtn = document.getElementById('dashboard-btn');
+
+            // --- FLICKER PREVENTION: Immediate UI update from Cache ---
+            const cachedState = localStorage.getItem('learnora_auth_state');
+            if (cachedState === 'in') {
+                if (joinBtn) joinBtn.setAttribute('style', 'display: none !important;');
+                if (dashBtn) dashBtn.setAttribute('style', 'display: block !important;');
+            } else if (cachedState === 'out') {
+                if (joinBtn) joinBtn.setAttribute('style', 'display: block !important;');
+                if (dashBtn) dashBtn.setAttribute('style', 'display: none !important;');
+            }
+
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // Update Cache
+                    localStorage.setItem('learnora_auth_state', 'in');
+                    // User is signed in
+                    if (joinBtn) joinBtn.setAttribute('style', 'display: none !important;');
+                    if (dashBtn) dashBtn.setAttribute('style', 'display: block !important;');
+                } else {
+                    // Update Cache
+                    localStorage.setItem('learnora_auth_state', 'out');
+                    // User is signed out
+                    if (joinBtn) joinBtn.setAttribute('style', 'display: block !important;');
+                    if (dashBtn) dashBtn.setAttribute('style', 'display: none !important;');
+                }
+            });
+
+            // --- ENROLLMENT AUTH INTERCEPTOR ---
+            document.addEventListener('click', (e) => {
+                const target = e.target.closest('a');
+                if (target && target.getAttribute('href') && target.getAttribute('href').startsWith('/payment')) {
+                    if (!auth.currentUser) {
+                        e.preventDefault();
+                        const dest = target.getAttribute('href');
+                        // Optional: Store the destination so we can redirect back after login
+                        localStorage.setItem('redirect_after_auth', dest);
+                        window.location.href = '/auth';
+                    }
+                }
+            });
+        })();
+    </script>

@@ -111,14 +111,6 @@
 </head>
 
 <body>
-    <!-- Spinner Start -->
-    <div id="spinner"
-        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div>
-    <!-- Spinner End -->
 
     <!-- Dashboard Header -->
     <%- include('partials/dashboard-header') %>
@@ -146,30 +138,13 @@
                                     <th class="border-0">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="payment-table-body">
                                 <tr>
-                                    <td>#TRX-94821</td>
-                                    <td>Oct 12, 2023</td>
-                                    <td>Mastering Modern Web Development</td>
-                                    <td>$100.00</td>
-                                    <td><span class="status-badge status-success">Successful</span></td>
-                                    <td><button class="btn btn-sm btn-outline-primary">Invoice</button></td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-94750</td>
-                                    <td>Sep 25, 2023</td>
-                                    <td>Ethical Hacking Foundations</td>
-                                    <td>$100.00</td>
-                                    <td><span class="status-badge status-success">Successful</span></td>
-                                    <td><button class="btn btn-sm btn-outline-primary">Invoice</button></td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-94612</td>
-                                    <td>Aug 10, 2023</td>
-                                    <td>Advanced Graphic Design Concepts</td>
-                                    <td>$100.00</td>
-                                    <td><span class="status-badge status-pending">Pending</span></td>
-                                    <td><button class="btn btn-sm btn-outline-primary">Invoice</button></td>
+                                    <td colspan="6" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="sr-only">Loading...</span>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -218,15 +193,57 @@
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script>
         const firebaseConfig = <%- JSON.stringify(firebaseConfig) %>;
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
 
-        firebase.auth().onAuthStateChanged(user => {
+        const tableBody = document.getElementById('payment-table-body');
+
+        auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('userName').innerText = user.displayName || 'Student';
+                fetchPayments(user.uid);
+            } else {
+                window.location.href = '/auth';
             }
         });
+
+        function fetchPayments(uid) {
+            db.ref('users/' + uid + '/payments').on('value', snapshot => {
+                tableBody.innerHTML = '';
+                const payments = snapshot.val();
+
+                if (!payments) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                <i class="fa fa-info-circle me-2"></i> No transaction history found.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                // Convert object to array and sort by timestamp (newest first)
+                const paymentList = Object.values(payments).sort((a, b) => b.timestamp - a.timestamp);
+
+                paymentList.forEach(payment => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${payment.transactionId}</td>
+                        <td>${payment.date}</td>
+                        <td>${payment.courseName}</td>
+                        <td>${payment.amount}</td>
+                        <td><span class="status-badge status-success">${payment.status}</span></td>
+                        <td><button class="btn btn-sm btn-outline-primary" onclick="alert('Digital Invoice for ${payment.transactionId} coming soon!')">Invoice</button></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            });
+        }
 
         document.getElementById('logoutBtn').addEventListener('click', () => {
             firebase.auth().signOut().then(() => {

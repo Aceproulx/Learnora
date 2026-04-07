@@ -126,22 +126,32 @@
 
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
     <script>
         // Firebase Configuration - Passed from res.locals
         const firebaseConfig = <%- JSON.stringify(firebaseConfig) %>;
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.database();
+
+        let currentUser = null;
+        const invoiceId = "#INV-" + (Math.floor(Math.random() * 90000) + 10000);
+        document.querySelector('.text-muted').innerText = "ID: " + invoiceId;
 
         // Check Auth and Get Name
         auth.onAuthStateChanged(user => {
-            if (user && user.displayName) {
-                document.getElementById('invoiceUserName').innerText = user.displayName;
+            if (user) {
+                currentUser = user;
+                if (user.displayName) {
+                    document.getElementById('invoiceUserName').innerText = user.displayName;
+                }
             }
         });
 
         document.getElementById('payBtn').addEventListener('click', function() {
             const course = document.getElementById('courseName').innerText;
+            const price = "<%= price || '100.00' %>";
             document.getElementById('invoiceCourseName').innerText = course;
             
             // Show processing
@@ -150,6 +160,26 @@
 
             // Simulate "Invoice Generation"
             setTimeout(() => {
+                // Save to Database
+                if (currentUser) {
+                    const paymentData = {
+                        transactionId: invoiceId,
+                        courseName: course,
+                        amount: "$" + price,
+                        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                        status: "Successful",
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    };
+
+                    db.ref('users/' + currentUser.uid + '/payments').push(paymentData)
+                        .then(() => {
+                            console.log("Payment recorded successfully");
+                        })
+                        .catch(err => {
+                            console.error("Error saving payment:", err);
+                        });
+                }
+
                 document.getElementById('processing-content').classList.add('d-none');
                 document.getElementById('invoice-content').classList.remove('d-none');
             }, 3000);

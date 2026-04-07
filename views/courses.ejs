@@ -5,7 +5,7 @@
         <div class="container py-5">
             <div class="row justify-content-center">
                 <div class="col-lg-10 text-center">
-                    <h1 class="display-3 text-white animated slideInDown">Our Courses</h1>
+                    <h1 class="display-3 text-white">Our Courses</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center">
                             <li class="breadcrumb-item"><a class="text-white" href="/">Home</a></li>
@@ -22,13 +22,13 @@
     <!-- Courses Start -->
     <div class="container-xxl py-5">
         <div class="container">
-            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <div class="text-center">
                 <h6 class="section-title bg-white text-center text-primary px-3">Courses</h6>
                 <h1 class="mb-5">Popular Courses</h1>
             </div>
             <div class="row g-4 justify-content-center" id="course-container">
                 <% courses.forEach((course, index) => { %>
-                    <div class="col-lg-4 col-md-6 wow fadeInUp course-card" data-wow-delay="<%= course.delay %>" style="<%= index >= 6 ? 'display: none;' : '' %>">
+                    <div class="col-lg-4 col-md-6 course-card" style="<%= index >= 6 ? 'display: none;' : '' %>">
                         <div class="course-item bg-light">
                             <div class="position-relative overflow-hidden">
                                 <img class="img-fluid" src="<%= course.image %>" alt="<%= course.name %>">
@@ -92,10 +92,11 @@
                     let newlyVisible = 0;
                     for (let i = visibleCount; i < courseCards.length && newlyVisible < 3; i++) {
                         courseCards[i].style.display = 'block';
-                        // Trigger WOW.js animation if present
+                        /* 
                         if (typeof WOW !== 'undefined') {
                             new WOW().init();
                         }
+                        */
                         newlyVisible++;
                     }
                     visibleCount += newlyVisible;

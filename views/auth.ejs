@@ -20,7 +20,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* [Existing styles from auth.html - truncated for brevity but preserved in the actual file] */
         /* ═══════════════════════════════════════════════
            RESET & BASE
         ═══════════════════════════════════════════════ */
@@ -380,7 +379,7 @@
             border: none;
             border-radius: 10px;
             color: #fff;
-            font-family: 'Nunito', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-weight: 800;
             font-size: 0.95rem;
             padding: 0.8rem 1rem;
@@ -426,7 +425,7 @@
             border: 1px solid var(--border);
             border-radius: 10px;
             color: var(--text);
-            font-family: 'Nunito', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-weight: 700;
             font-size: 0.88rem;
             padding: 0.7rem 1rem;
@@ -673,7 +672,7 @@
                         <div class="check-row">
                             <input type="checkbox" id="termsCheck" required>
                             <label for="termsCheck">
-                                I agree to the <a href="#">Terms &amp; Conditions</a> and <a href="#">Privacy Policy</a>
+                                I agree to the <a href="/terms">Terms &amp; Conditions</a> and <a href="#">Privacy Policy</a>
                             </label>
                         </div>
 
@@ -737,9 +736,12 @@
         }
 
         function setLoading(btnId, spinnerId, textId, on) {
-            document.getElementById(btnId).disabled      = on;
-            document.getElementById(spinnerId).style.display = on ? 'inline-block' : 'none';
-            document.getElementById(textId).style.display   = on ? 'none' : 'inline';
+            const btn = document.getElementById(btnId);
+            const spinner = document.getElementById(spinnerId);
+            const txt = document.getElementById(textId);
+            if(btn) btn.disabled = on;
+            if(spinner) spinner.style.display = on ? 'inline-block' : 'none';
+            if(txt) txt.style.display = on ? 'none' : 'inline';
         }
 
         function togglePwd(id, btn) {
@@ -758,10 +760,11 @@
             const colors = ['#ef4444','#f97316','#06BBCC','#22c55e'];
             const labels = ['Weak','Fair','Good','Strong'];
             ['seg1','seg2','seg3','seg4'].forEach((id, i) => {
-                document.getElementById(id).style.background = i < s ? colors[s-1] : 'rgba(255,255,255,0.1)';
+                const seg = document.getElementById(id);
+                if(seg) seg.style.background = i < s ? colors[s-1] : 'rgba(255,255,255,0.1)';
             });
             const lbl = document.getElementById('strengthLabel');
-            lbl.textContent  = val ? (labels[s-1] || 'Very Weak') : '';
+            if(lbl) lbl.textContent  = val ? (labels[s-1] || 'Very Weak') : '';
         }
 
         /* ── Authentication Handlers ───────────────── */
@@ -775,7 +778,7 @@
             try {
                 await auth.signInWithEmailAndPassword(email, pass);
                 showAlert('success', 'Login successful! Redirecting...');
-                setTimeout(() => window.location.href = '/dashboard', 1200);
+                completeAuthRedirect();
             } catch (err) {
                 showAlert('error', err.message);
                 setLoading('loginBtn', 'loginSpinner', 'loginBtnText', false);
@@ -805,8 +808,8 @@
                     email: email,
                     createdAt: Date.now()
                 });
-                showAlert('success', 'Account created! Redirecting...');
-                setTimeout(() => window.location.href = '/dashboard', 1200);
+                showAlert('success', 'Welcome to Learnora Academy!');
+                completeAuthRedirect();
             } catch (err) {
                 showAlert('error', err.message);
                 setLoading('signupBtn', 'signupSpinner', 'signupBtnText', false);
@@ -823,7 +826,7 @@
                     email: user.email,
                     lastLogin: Date.now()
                 });
-                window.location.href = '/dashboard';
+                completeAuthRedirect();
             } catch (err) {
                 showAlert('error', err.message);
             }
@@ -838,6 +841,15 @@
             } catch (err) {
                 showAlert('error', err.message);
             }
+        }
+
+        /* ── Redirection Logic ─────────────────────── */
+        function completeAuthRedirect() {
+            const dest = localStorage.getItem('redirect_after_auth') || '/dashboard';
+            localStorage.removeItem('redirect_after_auth');
+            setTimeout(() => {
+                window.location.href = dest;
+            }, 1200);
         }
     </script>
 </body>

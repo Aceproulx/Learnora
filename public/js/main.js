@@ -1,7 +1,8 @@
 (function ($) {
     "use strict";
 
-    // Spinner
+    // Spinner (Disabled for instant load)
+    /*
     var spinner = function () {
         setTimeout(function () {
             if ($('#spinner').length > 0) {
@@ -10,10 +11,10 @@
         }, 1);
     };
     spinner();
+    */
     
-    
-    // Initiate the wowjs
-    new WOW().init();
+    // Initiate the wowjs (Disabled for instant load)
+    // new WOW().init();
 
 
     // Sticky Navbar

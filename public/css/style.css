@@ -111,9 +111,14 @@
     }
 }
 
-.navbar-light .navbar-brand,
-.navbar-light a.btn {
+.navbar-light .navbar-brand {
     height: 75px;
+}
+
+@media (min-width: 1200px) {
+    .navbar-light a.btn {
+        height: 75px;
+    }
 }
 
 .navbar-light .navbar-nav .nav-link {

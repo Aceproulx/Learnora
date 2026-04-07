@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="utf-8">
-    <title><%= title %> | Learnora</title>
+    <title>
+        <%= title %> | Learnora
+    </title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -102,96 +104,148 @@
 </head>
 
 <body>
-    <!-- Spinner Start -->
-    <div id="spinner"
-        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div>
-    <!-- Spinner End -->
 
     <!-- Dashboard Header -->
     <%- include('partials/dashboard-header') %>
 
-    <div class="d-flex">
-        <!-- Sidebar Start -->
-        <%- include('partials/dashboard-sidebar', { currentPage: 'certifications' }) %>
-        <!-- Sidebar End -->
+        <div class="d-flex">
+            <!-- Sidebar Start -->
+            <%- include('partials/dashboard-sidebar', { currentPage: 'certifications' }) %>
+                <!-- Sidebar End -->
 
-        <!-- Content Area Start -->
-        <div class="content-area">
-            <div class="container-fluid">
-                <!-- Certifications Content -->
-                <div class="empty-state-card">
-                    <div class="empty-state-icon">
-                        <i class="fa fa-certificate"></i>
+                <!-- Content Area Start -->
+                <div class="content-area">
+                    <div class="container-fluid" id="cert-content-area">
+                        <!-- Data will be loaded here -->
+                        <div id="loading-spinner" class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+
+                        <!-- Empty State (Hidden by default) -->
+                        <div class="empty-state-card d-none" id="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fa fa-certificate"></i>
+                            </div>
+                            <h2 class="mb-3">No Certificates Yet</h2>
+                            <p class="text-muted mb-4 fs-5">You currently don't have any certificates because you
+                                haven't completed any courses yet. Finish your first course to earn your first
+                                certificate!</p>
+                            <a href="/courses" class="btn btn-primary py-3 px-5">Browse Courses</a>
+                        </div>
+
+                        <!-- Certificates Grid -->
+                        <div class="row g-4 d-none" id="cert-grid">
+                            <!-- Dynamic Cards Here -->
+                        </div>
                     </div>
-                    <h2 class="mb-3">No Certificates Yet</h2>
-                    <p class="text-muted mb-4 fs-5">You currently don't have any certificates because you haven't completed any courses yet. Finish your first course to earn your first certificate!</p>
-                    <a href="/all-courses" class="btn btn-primary py-3 px-5">Browse Courses</a>
+                </div>
+        </div>
+
+        <!-- Footer Start -->
+        <div class="container-fluid bg-dark text-light footer pt-5 mt-5">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-lg-3 col-md-6">
+                        <h4 class="text-white mb-3">Quick Link</h4>
+                        <a class="btn btn-link" href="/about">About Us</a>
+                        <a class="btn btn-link" href="/contact">Contact Us</a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h4 class="text-white mb-3">Contact</h4>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>support@learnora.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-whatsapp"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <!-- Footer End -->
 
-    <!-- Footer Start -->
-    <div class="container-fluid bg-dark text-light footer pt-5 mt-5">
-        <div class="container py-5">
-            <div class="row g-5">
-                <div class="col-lg-3 col-md-6">
-                    <h4 class="text-white mb-3">Quick Link</h4>
-                    <a class="btn btn-link" href="/about">About Us</a>
-                    <a class="btn btn-link" href="/contact">Contact Us</a>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h4 class="text-white mb-3">Contact</h4>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>support@learnora.com</p>
-                    <div class="d-flex pt-2">
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-whatsapp"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Footer End -->
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
-    <!-- Back to Top -->
-    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        <!-- JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="/lib/wow/wow.min.js"></script>
+        <script src="/lib/easing/easing.min.js"></script>
+        <script src="/lib/waypoints/waypoints.min.js"></script>
+        <script src="/lib/owlLearnora/owl.Learnora.min.js"></script>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/lib/wow/wow.min.js"></script>
-    <script src="/lib/easing/easing.min.js"></script>
-    <script src="/lib/waypoints/waypoints.min.js"></script>
-    <script src="/lib/owlLearnora/owl.Learnora.min.js"></script>
+        <!-- page Javascript -->
+        <script src="/js/main.js"></script>
 
-    <!-- page Javascript -->
-    <script src="/js/main.js"></script>
+        <!-- Firebase -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+        <script>
+            const firebaseConfig = <% - JSON.stringify(firebaseConfig) %>;
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.database();
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script>
-        const firebaseConfig = <%- JSON.stringify(firebaseConfig) %>;
-        firebase.initializeApp(firebaseConfig);
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const emptyState = document.getElementById('empty-state');
+            const certGrid = document.getElementById('cert-grid');
 
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                document.getElementById('userName').innerText = user.displayName || 'Student';
-            } else {
-                // window.location.href = '/auth';
-            }
-        });
-
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            firebase.auth().signOut().then(() => {
-                window.location.href = '/';
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    document.getElementById('userName').innerText = user.displayName || 'Student';
+                    fetchCertifications(user.uid);
+                } else {
+                    window.location.href = '/auth';
+                }
             });
-        });
-    </script>
+
+            function fetchCertifications(uid) {
+                db.ref('users/' + uid + '/certifications').on('value', snapshot => {
+                    loadingSpinner.classList.add('d-none');
+                    certGrid.innerHTML = '';
+                    const certifications = snapshot.val();
+
+                    if (!certifications) {
+                        emptyState.classList.remove('d-none');
+                        certGrid.classList.add('d-none');
+                        return;
+                    }
+
+                    emptyState.classList.add('d-none');
+                    certGrid.classList.remove('d-none');
+
+                    Object.values(certifications).forEach(cert => {
+                        const col = document.createElement('div');
+                        col.className = 'col-lg-4 col-md-6';
+                        col.innerHTML = `
+                        <div class="card h-100 border-0 shadow-sm rounded-3 p-4 text-center">
+                            <div class="mb-3">
+                                <i class="fa fa-certificate fa-3x text-primary opacity-50"></i>
+                            </div>
+                            <h5 class="mb-2">${cert.courseName}</h5>
+                            <p class="text-muted small mb-3">Earned on ${cert.dateEarned}</p>
+                            <div class="alert alert-light py-1 px-2 mb-3 small border">
+                                ID: ${cert.certId || 'CERT-' + Math.floor(Math.random() * 900000)}
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm mt-auto" onclick="alert('Viewing your certificate for ${cert.courseName}...')">
+                                <i class="fa fa-eye me-1"></i> View Certificate
+                            </button>
+                        </div>
+                    `;
+                        certGrid.appendChild(col);
+                    });
+                });
+            }
+
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                firebase.auth().signOut().then(() => {
+                    window.location.href = '/';
+                });
+            });
+        </script>
 </body>
 
 </html>

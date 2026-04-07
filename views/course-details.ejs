@@ -1,15 +1,18 @@
 <%- include('partials/header', { title: course.name, currentPage: 'courses' }) %>
 
     <!-- Course Header -->
-    <div class="container-fluid bg-primary py-5 mb-5 page-header" style="background: linear-gradient(rgba(24, 29, 56, .7), rgba(24, 29, 56, .7)), url('<%= course.image %>'); background-size: cover; background-position: center;">
+    <div class="container-fluid bg-primary py-5 mb-5 page-header"
+        style="background: linear-gradient(rgba(24, 29, 56, .7), rgba(24, 29, 56, .7)), url('<%= course.image %>'); background-size: cover; background-position: center;">
         <div class="container py-5">
             <div class="row justify-content-center">
                 <div class="col-lg-10 text-center">
-                    <h1 class="display-3 text-white animated slideInDown"><%= course.name %></h1>
+                    <h1 class="display-3 text-white animated slideInDown">
+                        <%= course.name %>
+                    </h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center text-uppercase">
                             <li class="breadcrumb-item"><a class="text-white" href="/">Home</a></li>
-                            <li class="breadcrumb-item"><a class="text-white" href="/all-courses">Courses</a></li>
+                            <li class="breadcrumb-item"><a class="text-white" href="/courses">Courses</a></li>
                             <li class="breadcrumb-item text-white active" aria-current="page">Details</li>
                         </ol>
                     </nav>
@@ -24,28 +27,38 @@
             <div class="row g-5">
                 <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="mb-5">
-                        <img class="img-fluid rounded mb-4 w-100" src="<%= course.image %>" alt="<%= course.name %>" style="max-height: 400px; object-fit: cover;">
+                        <img class="img-fluid rounded mb-4 w-100" src="<%= course.image %>" alt="<%= course.name %>"
+                            style="max-height: 400px; object-fit: cover;">
                         <h2 class="mb-4">About This Course</h2>
-                        <p class="fs-5 text-dark"><%= course.description %></p>
+                        <p class="fs-5 text-dark">
+                            <%= course.description %>
+                        </p>
                     </div>
 
                     <div class="mb-5">
                         <h3 class="mb-4">Course Syllabus</h3>
                         <div class="accordion" id="syllabusAccordion">
-                            <% course.syllabus.forEach((item, index) => { %>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="heading<%= index %>">
-                                    <button class="accordion-button <%= index === 0 ? '' : 'collapsed' %>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= index %>" aria-expanded="<%= index === 0 ? 'true' : 'false' %>" aria-controls="collapse<%= index %>">
-                                        Module <%= index + 1 %>: <%= item %>
-                                    </button>
-                                </h2>
-                                <div id="collapse<%= index %>" class="accordion-collapse collapse <%= index === 0 ? 'show' : '' %>" aria-labelledby="heading<%= index %>" data-bs-parent="#syllabusAccordion">
-                                    <div class="accordion-body">
-                                        Detailed breakdown of learning objectives and practical projects for the <%= item %> module. You will get hands-on experience and expert guidance.
+                            <% course.syllabus.forEach((item, index)=> { %>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading<%= index %>">
+                                        <button class="accordion-button <%= index === 0 ? '' : 'collapsed' %>"
+                                            type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapse<%= index %>"
+                                            aria-expanded="<%= index === 0 ? 'true' : 'false' %>"
+                                            aria-controls="collapse<%= index %>">
+                                            Module <%= index + 1 %>: <%= item %>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse<%= index %>"
+                                        class="accordion-collapse collapse <%= index === 0 ? 'show' : '' %>"
+                                        aria-labelledby="heading<%= index %>" data-bs-parent="#syllabusAccordion">
+                                        <div class="accordion-body">
+                                            Detailed breakdown of learning objectives and practical projects for the <%=
+                                                item %> module. You will get hands-on experience and expert guidance.
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <% }) %>
+                                <% }) %>
                         </div>
                     </div>
                 </div>
@@ -54,15 +67,27 @@
                     <!-- Pricing Card -->
                     <div class="card border-0 shadow mb-5 wow fadeInUp" data-wow-delay="0.3s">
                         <div class="card-body p-4">
-                            <h3 class="text-primary mb-4">$<%= course.price %></h3>
+                            <h3 class="text-primary mb-4">$<%= course.price %>
+                            </h3>
                             <ul class="list-unstyled mb-4">
-                                <li class="mb-2"><i class="fa fa-clock text-primary me-2"></i><strong>Duration:</strong> <%= course.duration %></li>
-                                <li class="mb-2"><i class="fa fa-user-tie text-primary me-2"></i><strong>Instructor:</strong> <%= course.instructor %></li>
-                                <li class="mb-2"><i class="fa fa-users text-primary me-2"></i><strong>Students:</strong> <%= course.students %>+ Enrolled</li>
-                                <li class="mb-2"><i class="fa fa-star text-primary me-2"></i><strong>Rating:</strong> <%= course.rating %>/5</li>
-                                <li class="mb-2"><i class="fa fa-certificate text-primary me-2"></i>Completion Certificate</li>
+                                <li class="mb-2"><i class="fa fa-clock text-primary me-2"></i><strong>Duration:</strong>
+                                    <%= course.duration %>
+                                </li>
+                                <li class="mb-2"><i
+                                        class="fa fa-user-tie text-primary me-2"></i><strong>Instructor:</strong>
+                                    <%= course.instructor %>
+                                </li>
+                                <li class="mb-2"><i class="fa fa-users text-primary me-2"></i><strong>Students:</strong>
+                                    <%= course.students %>+ Enrolled
+                                </li>
+                                <li class="mb-2"><i class="fa fa-star text-primary me-2"></i><strong>Rating:</strong>
+                                    <%= course.rating %>/5
+                                </li>
+                                <li class="mb-2"><i class="fa fa-certificate text-primary me-2"></i>Completion
+                                    Certificate</li>
                             </ul>
-                            <a href="/payment?course=<%= course.name %>&price=<%= course.price %>" class="btn btn-primary w-100 py-3 rounded-pill fw-bold">Enroll Now</a>
+                            <a href="/payment?course=<%= course.name %>&price=<%= course.price %>"
+                                class="btn btn-primary w-100 py-3 rounded-pill fw-bold">Enroll Now</a>
                         </div>
                     </div>
 
@@ -70,17 +95,22 @@
                     <div class="bg-light p-4 rounded wow fadeInUp" data-wow-delay="0.5s">
                         <h4 class="mb-4">Meet Your Instructor</h4>
                         <div class="d-flex align-items-center mb-3">
-                            <img class="img-fluid rounded-circle" src="/img/default.png" alt="" style="width: 80px; height: 80px; object-fit: cover;">
+                            <img class="img-fluid rounded-circle" src="/img/default.png" alt=""
+                                style="width: 80px; height: 80px; object-fit: cover;">
                             <div class="ms-3">
-                                <h5 class="mb-0"><%= course.instructor %></h5>
+                                <h5 class="mb-0">
+                                    <%= course.instructor %>
+                                </h5>
                                 <small>Lead Instructor at Learnora</small>
                             </div>
                         </div>
-                        <p class="mb-0 text-muted">A dedicated professional with years of experience in <%= course.category %>. Committed to helping students achieve their career goals through practical, modern learning.</p>
+                        <p class="mb-0 text-muted">A dedicated professional with years of experience in <%=
+                                course.category %>. Committed to helping students achieve their career goals through
+                                practical, modern learning.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-<%- include('partials/footer') %>
+    <%- include('partials/footer') %>
