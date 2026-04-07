@@ -7,134 +7,75 @@
                 <h6 class="section-title bg-white text-center text-primary px-3">Courses</h6>
                 <h1 class="mb-5">Popular Courses</h1>
             </div>
-            <div class="row g-4 justify-content-center">
-                <!-- Graphic Designing -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="row g-4 justify-content-center" id="course-container">
+                <% courses.forEach((course, index) => { %>
+                <div class="col-lg-4 col-md-6 wow fadeInUp course-card" data-wow-delay="<%= course.delay %>" style="<%= index >= 6 ? 'display: none;' : '' %>">
                     <div class="course-item bg-light">
                         <div class="position-relative overflow-hidden">
-                            <img class="img-fluid" src="/img/graphic-des.avif" alt="Graphic Designing">
+                            <img class="img-fluid" src="<%= course.image %>" alt="<%= course.name %>">
                             <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end"
+                                <a href="/course/<%= course.id %>" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end"
                                     style="border-radius: 30px 0 0 30px;">Read More</a>
-                                <a href="/auth" class="flex-shrink-0 btn btn-sm btn-primary px-3"
+                                <a href="/payment?course=<%= course.name %>&price=<%= course.price %>" class="flex-shrink-0 btn btn-sm btn-primary px-3"
                                     style="border-radius: 0 30px 30px 0;">Join Now</a>
                             </div>
                         </div>
                         <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0">$100</h3>
-                            <h5 class="mb-4">Graphic Designing</h5>
-                        </div>
-                    </div>
-                </div>
-                <!-- Photography + Photo Editing -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <img class="img-fluid" src="/img/photography.webp" alt="Photography + Photo Editing">
-                            <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end"
-                                    style="border-radius: 30px 0 0 30px;">Read More</a>
-                                <a href="/auth" class="flex-shrink-0 btn btn-sm btn-primary px-3"
-                                    style="border-radius: 0 30px 30px 0;">Join Now</a>
+                            <h3 class="mb-0">$<%= course.price %></h3>
+                            <div class="mb-3">
+                                <% for(let i=0; i<course.rating; i++) { %>
+                                <small class="fa fa-star text-primary"></small>
+                                <% } %>
+                                <small>(<%= course.reviews %>)</small>
                             </div>
+                            <h5 class="mb-4"><%= course.name %></h5>
                         </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0">$100</h3>
-                            <h5 class="mb-4">Photography + Photo Editing</h5>
-                        </div>
-                    </div>
-                </div>
-                <!-- Video Shooting + Video Editing -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <img class="img-fluid" src="/img/video-editing.avif" alt="Video Shooting + Video Editing">
-                            <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end"
-                                    style="border-radius: 30px 0 0 30px;">Read More</a>
-                                <a href="/auth" class="flex-shrink-0 btn btn-sm btn-primary px-3"
-                                    style="border-radius: 0 30px 30px 0;">Join Now</a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0">$100</h3>
-                            <h5 class="mb-4">Video Shooting + Video Editing</h5>
+                        <div class="d-flex border-top">
+                            <small class="flex-fill text-center border-end py-2"><i
+                                    class="fa fa-user-tie text-primary me-2"></i><%= course.instructor %></small>
+                            <small class="flex-fill text-center border-end py-2"><i
+                                    class="fa fa-clock text-primary me-2"></i><%= course.duration %></small>
+                            <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i><%= course.students %>
+                                Students</small>
                         </div>
                     </div>
                 </div>
-                <!-- Ethical Hacking for Web Applications -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <img class="img-fluid" src="/img/course-2.jpg" alt="Website Development">
-                            <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end"
-                                    style="border-radius: 30px 0 0 30px;">Read More</a>
-                                <a href="/auth" class="flex-shrink-0 btn btn-sm btn-primary px-3"
-                                    style="border-radius: 0 30px 30px 0;">Join Now</a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0">$100</h3>
-                            <h5 class="mb-4">Ethical Hacking for Web Applications</h5>
-                        </div>
-                    </div>
-                </div>
-                <!-- Mobile Apps Development -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.9s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <img class="img-fluid" src="/img/mobile-app.jpeg" alt="Mobile Apps Development">
-                            <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end"
-                                    style="border-radius: 30px 0 0 30px;">Read More</a>
-                                <a href="/auth" class="flex-shrink-0 btn btn-sm btn-primary px-3"
-                                    style="border-radius: 0 30px 30px 0;">Join Now</a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0">$100</h3>
-                            <h5 class="mb-4">Mobile Apps Development</h5>
-                        </div>
-                    </div>
-                </div>
-                <!-- Cybersecurity -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="1.1s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <img class="img-fluid" src="/img/cybersec.jpeg" alt="Cybersecurity">
-                            <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end"
-                                    style="border-radius: 30px 0 0 30px;">Read More</a>
-                                <a href="/auth" class="flex-shrink-0 btn btn-sm btn-primary px-3"
-                                    style="border-radius: 0 30px 30px 0;">Join Now</a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0">$100</h3>
-                            <h5 class="mb-4">Cybersecurity</h5>
-                        </div>
-                    </div>
-                </div>
-                <!-- Website Development -->
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <img class="img-fluid" src="/img/course-1.jpg" alt="Graphic Designing">
-                            <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end"
-                                    style="border-radius: 30px 0 0 30px;">Read More</a>
-                                <a href="/auth" class="flex-shrink-0 btn btn-sm btn-primary px-3"
-                                    style="border-radius: 0 30px 30px 0;">Join Now</a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0">$100</h3>
-                            <h5 class="mb-4">Web Design & Development Course for Beginners</h5>
-                        </div>
-                    </div>
-                </div>
+                <% }) %>
             </div>
+            <% if (courses.length > 6) { %>
+            <div class="text-center mt-5">
+                <button id="load-more-btn" class="btn btn-primary py-3 px-5 rounded-pill shadow-sm">Load More Courses</button>
+            </div>
+            <% } %>
+        </div>
+    </div>
+    <!-- Courses End -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            const courseCards = document.querySelectorAll('.course-card');
+            let visibleCount = 6;
+
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', function() {
+                    let newlyVisible = 0;
+                    for (let i = visibleCount; i < courseCards.length && newlyVisible < 3; i++) {
+                        courseCards[i].style.display = 'block';
+                        if (typeof WOW !== 'undefined') {
+                            new WOW().init();
+                        }
+                        newlyVisible++;
+                    }
+                    visibleCount += newlyVisible;
+                    
+                    if (visibleCount >= courseCards.length) {
+                        loadMoreBtn.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
         </div>
     </div>
     <!-- Courses End -->

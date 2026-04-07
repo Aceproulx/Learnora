@@ -1,0 +1,21 @@
+<div class="sidebar d-none d-lg-block">
+    <div class="py-4">
+        <nav class="nav flex-column">
+            <a class="nav-link <%= currentPage === 'dashboard' ? 'active' : '' %>" href="/dashboard">
+                <i class="fa fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a class="nav-link <%= currentPage === 'user-courses' ? 'active' : '' %>" href="/user-courses">
+                <i class="fa fa-book"></i> My Courses
+            </a>
+            <a class="nav-link <%= currentPage === 'certifications' ? 'active' : '' %>" href="/certifications">
+                <i class="fa fa-certificate"></i> Certificates
+            </a>
+            <a class="nav-link <%= currentPage === 'payments' ? 'active' : '' %>" href="/payment-history">
+                <i class="fa fa-wallet"></i> Payment History
+            </a>
+            <a class="nav-link <%= currentPage === 'settings' ? 'active' : '' %>" href="/settings">
+                <i class="fa fa-cog"></i> Settings
+            </a>
+        </nav>
+    </div>
+</div>

@@ -78,19 +78,28 @@
             padding: 30px;
         }
 
-        .empty-state-card {
+        .payment-card {
             background: #fff;
-            padding: 50px 30px;
+            padding: 30px;
             border-radius: 15px;
-            text-align: center;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
-        .empty-state-icon {
-            font-size: 4rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-            opacity: 0.3;
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background-color: #e8fdf0;
+            color: #22c55e;
+        }
+
+        .status-pending {
+            background-color: #fff9e6;
+            color: #f59e0b;
         }
 
         @media (max-width: 991.98px) {
@@ -116,20 +125,55 @@
 
     <div class="d-flex">
         <!-- Sidebar Start -->
-        <%- include('partials/dashboard-sidebar', { currentPage: 'certifications' }) %>
+        <%- include('partials/dashboard-sidebar', { currentPage: 'payments' }) %>
         <!-- Sidebar End -->
 
         <!-- Content Area Start -->
         <div class="content-area">
             <div class="container-fluid">
-                <!-- Certifications Content -->
-                <div class="empty-state-card">
-                    <div class="empty-state-icon">
-                        <i class="fa fa-certificate"></i>
+                <div class="payment-card">
+                    <h3 class="mb-4">Payment History</h3>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="border-0">Transaction ID</th>
+                                    <th class="border-0">Date</th>
+                                    <th class="border-0">Course Name</th>
+                                    <th class="border-0">Amount</th>
+                                    <th class="border-0">Status</th>
+                                    <th class="border-0">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#TRX-94821</td>
+                                    <td>Oct 12, 2023</td>
+                                    <td>Mastering Modern Web Development</td>
+                                    <td>$100.00</td>
+                                    <td><span class="status-badge status-success">Successful</span></td>
+                                    <td><button class="btn btn-sm btn-outline-primary">Invoice</button></td>
+                                </tr>
+                                <tr>
+                                    <td>#TRX-94750</td>
+                                    <td>Sep 25, 2023</td>
+                                    <td>Ethical Hacking Foundations</td>
+                                    <td>$100.00</td>
+                                    <td><span class="status-badge status-success">Successful</span></td>
+                                    <td><button class="btn btn-sm btn-outline-primary">Invoice</button></td>
+                                </tr>
+                                <tr>
+                                    <td>#TRX-94612</td>
+                                    <td>Aug 10, 2023</td>
+                                    <td>Advanced Graphic Design Concepts</td>
+                                    <td>$100.00</td>
+                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                    <td><button class="btn btn-sm btn-outline-primary">Invoice</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <h2 class="mb-3">No Certificates Yet</h2>
-                    <p class="text-muted mb-4 fs-5">You currently don't have any certificates because you haven't completed any courses yet. Finish your first course to earn your first certificate!</p>
-                    <a href="/all-courses" class="btn btn-primary py-3 px-5">Browse Courses</a>
                 </div>
             </div>
         </div>
@@ -181,8 +225,6 @@
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('userName').innerText = user.displayName || 'Student';
-            } else {
-                // window.location.href = '/auth';
             }
         });
 

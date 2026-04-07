@@ -1,0 +1,163 @@
+<%- include('partials/header', { title: 'Payment', currentPage: 'courses' }) %>
+
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card shadow border-0 rounded-4 overflow-hidden">
+                        <div class="card-header bg-white border-0 pt-4 px-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg" alt="PayPal" style="height: 40px;">
+                                <h5 class="m-0 text-muted">Checkout</h5>
+                            </div>
+                            <hr>
+                        </div>
+                        <div class="card-body p-4" id="main-content">
+                            <h4 class="mb-4">Order Summary</h4>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Course Name:</span>
+                                <span class="fw-bold" id="courseName"><%= course || 'Selected Course' %></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <span>Price:</span>
+                                <span class="fw-bold text-primary">$<%= price || '100.00' %></span>
+                            </div>
+                            
+                            <div class="alert alert-info border-0 rounded-3 mb-4">
+                                <i class="fa fa-info-circle me-2"></i> You will be paying via a **PayPal Invoice**. Please proceed to initiate the transaction.
+                            </div>
+
+                            <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold" id="payBtn">
+                                Proceed to PayPal Invoice
+                            </button>
+
+                            <p class="text-center mt-3 text-muted" style="font-size: 0.85rem;">
+                                Secure payment powered by PayPal. <i class="fa fa-lock"></i>
+                            </p>
+                        </div>
+
+                        <!-- Processing State (Hidden) -->
+                        <div class="card-body p-5 text-center d-none" id="processing-content">
+                            <div class="spinner-border text-primary mb-4" style="width: 3rem; height: 3rem;" role="status">
+                                <span class="sr-only">Processing...</span>
+                            </div>
+                            <h4 class="mb-3">Generating PayPal Invoice...</h4>
+                            <p class="text-muted">Please do not close this window. We are processing your request with PayPal.</p>
+                        </div>
+
+                        <!-- Invoice Details State (Hidden) -->
+                        <div class="card-body p-4 d-none" id="invoice-content">
+                            <div id="printable-invoice">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h4 class="text-primary m-0">INVOICE</h4>
+                                    <span class="text-muted">ID: #INV-<%= Math.floor(Math.random() * 90000) + 10000 %></span>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-6">
+                                        <h6 class="text-muted text-uppercase small">Bill From:</h6>
+                                        <p class="mb-0"><strong>Learnora Academy</strong><br>Jakarta International College<br>Letjen S. Parman St No.1AA, Slipi<br>West Jakarta City, Jakarta 11480</p>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <h6 class="text-muted text-uppercase small">Bill To:</h6>
+                                        <p class="mb-0"><strong id="invoiceUserName">Verified Student</strong><br>Verified PayPal User</p>
+                                    </div>
+                                </div>
+                                <table class="table table-bordered mb-4">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th>Description</th>
+                                            <th class="text-end">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span id="invoiceCourseName"></span></td>
+                                            <td class="text-end">$<%= price || '100.00' %></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-end fw-bold">Total</td>
+                                            <td class="text-end fw-bold text-primary">$<%= price || '100.00' %></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="alert alert-success border-0 small py-2">
+                                    <i class="fa fa-check-circle me-1"></i> Status: **Paid via PayPal Invoice**
+                                </div>
+                            </div>
+                            
+                            <hr>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-secondary" onclick="window.print()">
+                                    <i class="fa fa-file-pdf me-2"></i> Save as PDF
+                                </button>
+                                <button class="btn btn-primary" id="finishBtn">
+                                    Finish & Go to Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Styling -->
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-invoice, #printable-invoice * {
+                visibility: visible;
+            }
+            #printable-invoice {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 40px;
+                background: white;
+            }
+            .navbar, .footer, .back-to-top, .btn, hr {
+                display: none !important;
+            }
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // Firebase Configuration - Passed from res.locals
+        const firebaseConfig = <%- JSON.stringify(firebaseConfig) %>;
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Check Auth and Get Name
+        auth.onAuthStateChanged(user => {
+            if (user && user.displayName) {
+                document.getElementById('invoiceUserName').innerText = user.displayName;
+            }
+        });
+
+        document.getElementById('payBtn').addEventListener('click', function() {
+            const course = document.getElementById('courseName').innerText;
+            document.getElementById('invoiceCourseName').innerText = course;
+            
+            // Show processing
+            document.getElementById('main-content').classList.add('d-none');
+            document.getElementById('processing-content').classList.remove('d-none');
+
+            // Simulate "Invoice Generation"
+            setTimeout(() => {
+                document.getElementById('processing-content').classList.add('d-none');
+                document.getElementById('invoice-content').classList.remove('d-none');
+            }, 3000);
+        });
+
+        document.getElementById('finishBtn').addEventListener('click', function() {
+            window.location.href = '/dashboard';
+        });
+    </script>
+
+<%- include('partials/footer') %>

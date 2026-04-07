@@ -121,41 +121,12 @@
     </div>
     <!-- Spinner End -->
 
-    <!-- Navbar Start -->
-    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-        <a href="/" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
-            <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>Learnora-acadamy</h2>
-        </a>
-        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav ms-auto p-4 p-lg-0">
-                <a href="/courses" class="nav-item nav-link">Courses</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" id="userName">Student</a>
-                    <div class="dropdown-menu fade-down m-0">
-                        <a href="/dashboard" class="dropdown-item active">Dashboard</a>
-                        <a href="#" class="dropdown-item" id="logoutBtn">Logout</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-    <!-- Navbar End -->
+    <!-- Dashboard Header -->
+    <%- include('partials/dashboard-header') %>
 
     <div class="d-flex">
         <!-- Sidebar Start -->
-        <div class="sidebar d-none d-lg-block">
-            <div class="py-4">
-                <nav class="nav flex-column">
-                    <a class="nav-link active" href="/dashboard"><i class="fa fa-tachometer-alt"></i> Dashboard</a>
-                    <a class="nav-link" href="#"><i class="fa fa-book"></i> My Courses</a>
-                    <a class="nav-link" href="#"><i class="fa fa-certificate"></i> Certificates</a>
-                    <a class="nav-link" href="#"><i class="fa fa-cog"></i> Settings</a>
-                </nav>
-            </div>
-        </div>
+        <%- include('partials/dashboard-sidebar', { currentPage: 'dashboard' }) %>
         <!-- Sidebar End -->
 
         <!-- Content Area Start -->
