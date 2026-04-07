@@ -1,4 +1,5 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const { initializeApp } = require('firebase/app');
 const { getDatabase, ref, set } = require('firebase/database');
 
@@ -24,7 +25,7 @@ const courses = [
         image: "/img/graphic-des.avif",
         rating: 5,
         reviews: 123,
-        instructor: "Sir Mangale",
+        instructor: "Maria Rodriguez",
         duration: "1.49 Hrs",
         students: 30,
         category: "Graphic Design",
@@ -46,7 +47,7 @@ const courses = [
         image: "/img/photography.webp",
         rating: 5,
         reviews: 123,
-        instructor: "Sir Kadzuwa",
+        instructor: "Maria Hernandez",
         duration: "1.49 Hrs",
         students: 30,
         category: "Photography",
@@ -68,7 +69,7 @@ const courses = [
         image: "/img/video-editing.avif",
         rating: 5,
         reviews: 123,
-        instructor: "Sir Kadzuwa",
+        instructor: "Maria Hernandez",
         duration: "1.49 Hrs",
         students: 30,
         category: "Video Editing",
@@ -85,7 +86,7 @@ const courses = [
     },
     {
         id: "ethical-hacking",
-        name: "Ethical Hacking for Web Applications",
+        name: "web security",
         price: 100,
         image: "/img/course-2.jpg",
         rating: 5,
@@ -112,7 +113,7 @@ const courses = [
         image: "/img/mobile-app.jpeg",
         rating: 5,
         reviews: 123,
-        instructor: "Sir Mangale",
+        instructor: "Maria Rodriguez",
         duration: "1.49 Hrs",
         students: 30,
         category: "App Development",
@@ -156,7 +157,7 @@ const courses = [
         image: "/img/course-1.jpg",
         rating: 5,
         reviews: 123,
-        instructor: "Sir Mangale",
+        instructor: "Maria Rodriguez",
         duration: "1.49 Hrs",
         students: 30,
         category: "Web Design",
