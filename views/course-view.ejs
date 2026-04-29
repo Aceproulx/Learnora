@@ -1,0 +1,256 @@
+<%- include('partials/header', { title: course.name, currentPage: 'courses' }) %>
+
+
+
+<div class="container thm-task-container">
+    <div class="mb-4">
+        <h2 class="text-dark"><%= course.name %></h2>
+        <p class="text-muted">Complete the tasks below to finish the module.</p>
+    </div>
+
+    <% course.tasks.forEach((task, tIndex) => { %>
+        <div class="thm-card" id="task-<%= task.taskId %>">
+            <div class="thm-card-header" 
+                 data-bs-toggle="collapse" 
+                 data-bs-target="#body-<%= task.taskId %>" 
+                 aria-expanded="<%= tIndex === 0 ? 'true' : 'false' %>" 
+                 aria-controls="body-<%= task.taskId %>"
+                 role="button">
+                <div>
+                    <span class="task-number">Task <%= task.taskId %></span>
+                    <h5><%= task.title %></h5>
+                </div>
+                <i class="fa fa-chevron-down"></i>
+            </div>
+            <div id="body-<%= task.taskId %>" class="collapse <%= tIndex === 0 ? 'show' : '' %>">
+                <div class="thm-card-body">
+                    <div class="thm-content">
+                        <% task.content.forEach(item => { %>
+                            <% if (item.type === 'text') { %>
+                                <%- item.value %>
+                            <% } else if (item.type === 'video') { %>
+                                <div class="video-container">
+                                    <iframe src="<%= item.value %>" frameborder="0" allowfullscreen></iframe>
+                                </div>
+                            <% } %>
+                        <% }) %>
+
+                        <div class="task-actions mt-4 pt-3 border-top d-flex flex-wrap gap-2">
+                            <% 
+                            const resources = task.content.filter(item => item.type === 'pdf');
+                            if (resources.length > 0) { 
+                            %>
+                                <button class="btn btn-outline-primary rounded-pill px-4" 
+                                        onclick='openResourceModal(<%- JSON.stringify(resources).replace(/'/g, "&apos;") %>, "<%= task.title %>")'>
+                                    <i class="fa fa-file-pdf me-2"></i> View Resources (<%= resources.length %>)
+                                </button>
+                            <% } %>
+
+                            <% if (task.exercises && task.exercises.length > 0) { %>
+                                <button class="btn btn-outline-success rounded-pill px-4" 
+                                        onclick='openExerciseModal(<%- JSON.stringify(task.exercises).replace(/'/g, "&apos;") %>, "<%= task.title.replace(/"/g, "&quot;") %>")'>
+                                    <i class="fa fa-tasks me-2"></i> View Exercise
+                                </button>
+                            <% } %>
+
+                            <button class="btn btn-primary rounded-pill px-4 ms-auto" 
+                                    id="complete-btn-<%= task.taskId %>"
+                                    onclick="markTaskCompleted('<%= course.id %>', '<%= task.taskId %>')">
+                                <i class="fa fa-check me-2"></i> Mark as Completed
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    <% }) %>
+</div>
+
+<script>
+    function checkAnswer(id, correct) {
+        const input = document.getElementById('input-' + id);
+        if (!input) return;
+        
+        if (input.value.toLowerCase().trim() === correct.toLowerCase().trim()) {
+            input.style.backgroundColor = '#d4edda';
+            input.style.borderColor = '#28a745';
+            input.style.color = '#155724';
+            showNotification('Correct!', 'Well done, you got it right!', 'success');
+        } else {
+            input.style.backgroundColor = '#f8d7da';
+            input.style.borderColor = '#dc3545';
+            input.style.color = '#721c24';
+            showNotification('Incorrect', 'That is not quite right. Try again!', 'error');
+        }
+    }
+
+    function openExerciseModal(exercises, taskTitle) {
+        const modalTitle = document.getElementById('exerciseModalLabel');
+        const modalBody = document.getElementById('exerciseModalBody');
+        
+        modalTitle.innerText = `Exercise: ${taskTitle}`;
+        modalBody.innerHTML = '<h6 class="text-success mb-4"><i class="fa fa-pencil-alt me-2"></i>Answer the questions below</h6>';
+        
+        exercises.forEach(ex => {
+            let html = `
+                <div class="mb-4 p-3 bg-light rounded border">
+                    <div class="thm-question mb-2">${ex.question}</div>
+            `;
+            
+            if (ex.options) {
+                html += '<ul class="list-unstyled ms-3 mb-3">';
+                ex.options.forEach(opt => {
+                    html += `<li><i class="far fa-circle me-2 text-primary"></i> ${opt}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            html += `
+                <div class="thm-input-group">
+                    <input type="text" class="thm-input" placeholder="Your answer here..." id="input-${ex.id}">
+                    <button class="thm-btn-submit" onclick="checkAnswer('${ex.id}', '${ex.answer.replace(/'/g, "\\'")}')">Submit</button>
+                    ${ex.hint ? `
+                        <button class="thm-hint-btn" onclick="showNotification('Hint', '${ex.hint.replace(/'/g, "\\'")}', 'hint')">
+                            <i class="fa fa-lightbulb"></i>
+                        </button>
+                    ` : ''}
+                </div>
+            </div>`;
+            
+            modalBody.innerHTML += html;
+        });
+        
+        const myModal = new bootstrap.Modal(document.getElementById('exerciseModal'));
+        myModal.show();
+    }
+
+    function openResourceModal(resources, taskTitle) {
+        const modalTitle = document.getElementById('resourceModalLabel');
+        const modalBody = document.getElementById('resourceModalBody');
+        
+        modalTitle.innerText = `Resources: ${taskTitle}`;
+        modalBody.innerHTML = '<div class="list-group list-group-flush">';
+        
+        resources.forEach((res, index) => {
+            modalBody.innerHTML += `
+                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-file-pdf fa-2x text-danger me-3"></i>
+                        <div>
+                            <h6 class="mb-0">Resource ${index + 1}</h6>
+                            <small class="text-muted">PDF Document</small>
+                        </div>
+                    </div>
+                    <a href="${res.value}" target="_blank" class="btn btn-primary btn-sm rounded-pill px-3">
+                        <i class="fa fa-download me-1"></i> Download
+                    </a>
+                </div>
+            `;
+        });
+        
+        modalBody.innerHTML += '</div>';
+        
+        const myModal = new bootstrap.Modal(document.getElementById('resourceModal'));
+        myModal.show();
+    }
+
+    // Task Completion Logic
+    function markTaskCompleted(courseId, taskId) {
+        if (!firebase.auth().currentUser) {
+            showNotification('Auth Required', 'Please login to save your progress!', 'info');
+            return;
+        }
+
+        const uid = firebase.auth().currentUser.uid;
+        const db = firebase.database();
+        const btn = document.getElementById(`complete-btn-${taskId}`);
+        const taskCard = document.getElementById(`task-${taskId}`);
+
+        // Update Firebase
+        db.ref(`users/${uid}/progress/${courseId}/${taskId}`).set({
+            completed: true,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => {
+            btn.innerHTML = '<i class="fa fa-check-circle me-2"></i> Completed';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-success');
+            btn.disabled = true;
+            if (taskCard) taskCard.classList.add('task-completed-ui');
+            showNotification('Success', 'Task marked as completed!', 'success');
+        }).catch(err => {
+            console.error(err);
+            showNotification('Error', 'Could not save progress.', 'error');
+        });
+    }
+
+    // Load progress on page load
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+            const db = firebase.database();
+            const courseId = '<%= course.id %>';
+            db.ref(`users/${user.uid}/progress/${courseId}`).once('value', snapshot => {
+                const progress = snapshot.val();
+                if (progress) {
+                    Object.keys(progress).forEach(taskId => {
+                        const btn = document.getElementById(`complete-btn-${taskId}`);
+                        const taskCard = document.getElementById(`task-${taskId}`);
+                        if (btn) {
+                            btn.innerHTML = '<i class="fa fa-check-circle me-2"></i> Completed';
+                            btn.classList.remove('btn-primary');
+                            btn.classList.add('btn-success');
+                            btn.disabled = true;
+                        }
+                        if (taskCard) taskCard.classList.add('task-completed-ui');
+                    });
+                }
+            });
+        }
+    });
+</script>
+
+<!-- Exercise Modal -->
+<div class="modal fade" id="exerciseModal" tabindex="-1" aria-labelledby="exerciseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="exerciseModalLabel">Exercise</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" id="exerciseModalBody">
+                <!-- Exercises will be injected here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resource Modal -->
+<div class="modal fade" id="resourceModal" tabindex="-1" aria-labelledby="resourceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="resourceModalLabel">Study Resource</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="resourceModalBody">
+                <!-- Resource info will be injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/lib/wow/wow.min.js"></script>
+<script src="/lib/easing/easing.min.js"></script>
+<script src="/lib/waypoints/waypoints.min.js"></script>
+<script src="/lib/owlboolene/owl.boolene.min.js"></script>
+
+<!-- page Javascript -->
+<script src="/js/main.js"></script>
+</body>
+</html>
+
+

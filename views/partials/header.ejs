@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title><%= title %> | Learnora</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
     <meta content="" name="keywords">
     <meta content="" name="description">
 
@@ -31,9 +32,35 @@
 
     <!-- page Stylesheet -->
     <link href="/css/style.css" rel="stylesheet">
+    <style>
+        /* Remove grey highlight from navbar toggler */
+        .navbar-toggler:focus,
+        .navbar-toggler:active,
+        .navbar-toggler:hover {
+            outline: none;
+            box-shadow: none;
+            border: none;
+        }
+
+        /* Compact Mobile Navbar */
+        @media (max-width: 991.98px) {
+            .navbar-brand h2 {
+                font-size: 1.3rem !important;
+                margin: 0 !important;
+            }
+            .navbar-brand {
+                padding: 10px 15px !important;
+            }
+            .navbar-toggler {
+                margin-right: 15px !important;
+                padding: 0 !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <div id="notification-container"></div>
 
 
     <!-- Navbar Start -->
@@ -46,16 +73,58 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto p-4 p-xl-0">
-                <a href="/" class="nav-item nav-link <%= currentPage === 'home' ? 'active' : '' %>">Home</a>
-                <a href="/about" class="nav-item nav-link <%= currentPage === 'about' ? 'active' : '' %>">About</a>
-                <a href="/courses" class="nav-item nav-link <%= currentPage === 'courses' ? 'active' : '' %>">Courses</a>
-                <a href="/contact" class="nav-item nav-link <%= currentPage === 'contact' ? 'active' : '' %>">Contact</a>
-                <a href="/cart" class="nav-item nav-link position-relative px-3 <%= currentPage === 'cart' ? 'active' : '' %>">
-                    <i class="fa fa-shopping-cart fs-5"></i>
-                    <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none; font-size: 10px; margin-top: 15px;">
-                        0
-                    </span>
-                </a>
+                <!-- Public Links (Default) -->
+                <div id="public-mobile-links" class="d-flex flex-column d-xl-none">
+                    <a href="/" class="nav-item nav-link <%= currentPage === 'home' ? 'active' : '' %>">Home</a>
+                    <a href="/about" class="nav-item nav-link <%= currentPage === 'about' ? 'active' : '' %>">About</a>
+                    <a href="/courses" class="nav-item nav-link <%= currentPage === 'courses' ? 'active' : '' %>">Courses</a>
+                    <a href="/contact" class="nav-item nav-link <%= currentPage === 'contact' ? 'active' : '' %>">Contact</a>
+                </div>
+
+                <!-- Logged In Mobile Links (Hidden by default) -->
+                <div id="logged-in-mobile-links" class="d-none d-xl-none w-100 bg-light p-3 rounded-3 mb-3">
+                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
+                            <i class="fa fa-user"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark" id="userNameHeaderMobile">Student</h6>
+                            <small class="text-muted">Learning Portal</small>
+                        </div>
+                    </div>
+                    
+                    <div class="list-group list-group-flush border-0">
+                        <a href="/dashboard" class="list-group-item list-group-item-action border-0 py-3 rounded-2 mb-1 text-secondary">
+                            <i class="fa fa-tachometer-alt me-3"></i>Dashboard
+                        </a>
+                        <a href="/user-courses" class="list-group-item list-group-item-action border-0 py-3 rounded-2 mb-1 text-secondary">
+                            <i class="fa fa-book me-3"></i>My Courses
+                        </a>
+                        <a href="/certifications" class="list-group-item list-group-item-action border-0 py-3 rounded-2 mb-1 text-secondary">
+                            <i class="fa fa-certificate me-3"></i>Certificates
+                        </a>
+                        <a href="/settings" class="list-group-item list-group-item-action border-0 py-3 rounded-2 mb-1 text-secondary">
+                            <i class="fa fa-cog me-3"></i>Settings
+                        </a>
+                        <a href="/cart" class="list-group-item list-group-item-action border-0 py-3 rounded-2 mb-1 text-secondary">
+                            <i class="fa fa-shopping-cart me-3"></i>Cart
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Desktop Links -->
+                <div class="d-none d-xl-flex">
+                    <a href="/" class="nav-item nav-link <%= currentPage === 'home' ? 'active' : '' %>">Home</a>
+                    <a href="/about" class="nav-item nav-link <%= currentPage === 'about' ? 'active' : '' %>">About</a>
+                    <a href="/courses" class="nav-item nav-link <%= currentPage === 'courses' ? 'active' : '' %>">Courses</a>
+                    <a href="/contact" class="nav-item nav-link <%= currentPage === 'contact' ? 'active' : '' %>">Contact</a>
+                    <a href="/cart" class="nav-item nav-link position-relative px-3 <%= currentPage === 'cart' ? 'active' : '' %>">
+                        <i class="fa fa-shopping-cart fs-5"></i>
+                        <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none; font-size: 10px; margin-top: 15px;">
+                            0
+                        </span>
+                    </a>
+                </div>
             </div>
             <div id="nav-auth-buttons" class="px-4 px-xl-0 pb-4 pb-xl-0">
                 <!-- Join Now Button -->
@@ -63,7 +132,7 @@
                         class="fa fa-arrow-right ms-3"></i></a>
                 
                 <!-- Dashboard Button -->
-                <a href="/dashboard" id="dashboard-btn" class="btn btn-primary py-2 py-xl-4 px-lg-5 d-block" style="display: none !important;">Dashboard<i
+                <a href="/dashboard" id="dashboard-btn" class="btn btn-primary py-2 py-xl-4 px-lg-5 d-none d-xl-block" style="display: none !important;">Dashboard<i
                         class="fa fa-user ms-3"></i></a>
             </div>
         </div>
@@ -75,10 +144,11 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
+    <script id="firebase-config" type="application/json"><%- JSON.stringify(firebaseConfig) %></script>
     <script>
         (function() {
             // Configuration injected from the server
-            const firebaseConfig = JSON.parse('<%- JSON.stringify(firebaseConfig) %>');
+            const firebaseConfig = JSON.parse(document.getElementById('firebase-config').textContent);
             
             // Initialize Firebase if not already initialized
             if (!firebase.apps.length) {
@@ -88,11 +158,56 @@
             const auth = firebase.auth();
             const joinBtn = document.getElementById('join-now-btn');
             const dashBtn = document.getElementById('dashboard-btn');
+            const heroBtns = document.querySelectorAll('.join-now-btn-hero');
             const cartBadge = document.getElementById('cart-badge');
 
-            // --- CART BADGE LOGIC ---
+            function updateUI(isLoggedIn) {
+                if (isLoggedIn) {
+                    if (joinBtn) { joinBtn.classList.add('d-none'); joinBtn.classList.remove('d-block'); }
+                    if (dashBtn) { dashBtn.classList.remove('d-none'); dashBtn.classList.add('d-xl-block'); }
+                    heroBtns.forEach(btn => btn.classList.add('d-none'));
+                    
+                    const publicMobile = document.getElementById('public-mobile-links');
+                    const loggedInMobile = document.getElementById('logged-in-mobile-links');
+                    if (publicMobile) publicMobile.classList.add('d-none');
+                    if (loggedInMobile) loggedInMobile.classList.remove('d-none');
+                } else {
+                    if (joinBtn) { joinBtn.classList.remove('d-none'); joinBtn.classList.add('d-block'); }
+                    if (dashBtn) { dashBtn.classList.add('d-none'); dashBtn.classList.remove('d-xl-block'); }
+                    heroBtns.forEach(btn => btn.classList.remove('d-none'));
+
+                    const publicMobile = document.getElementById('public-mobile-links');
+                    const loggedInMobile = document.getElementById('logged-in-mobile-links');
+                    if (publicMobile) publicMobile.classList.remove('d-none');
+                    if (loggedInMobile) loggedInMobile.classList.add('d-none');
+                }
+            }
+
+            // --- FLICKER PREVENTION: Immediate UI update from Cache ---
+            const cachedState = localStorage.getItem('learnora_auth_state');
+            updateUI(cachedState === 'in');
+
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    localStorage.setItem('learnora_auth_state', 'in');
+                    updateUI(true);
+                    
+                    // Update Name
+                    if (user.displayName) {
+                        const mobileName = document.getElementById('userNameHeaderMobile');
+                        if (mobileName) mobileName.innerText = user.displayName;
+                    }
+
+                    updateCartBadge(user.uid);
+                } else {
+                    localStorage.setItem('learnora_auth_state', 'out');
+                    updateUI(false);
+                    if (cartBadge) cartBadge.style.display = 'none';
+                }
+            });
+
+            // Re-define cart badge logic since I replaced it above
             function updateCartBadge(uid) {
-                if (!firebase.apps.length) return;
                 firebase.database().ref('users/' + uid + '/cart').on('value', (snapshot) => {
                     const cart = snapshot.val();
                     if (cart && cartBadge) {
@@ -105,46 +220,109 @@
                 });
             }
 
-            // --- FLICKER PREVENTION: Immediate UI update from Cache ---
-            const cachedState = localStorage.getItem('learnora_auth_state');
-            if (cachedState === 'in') {
-                if (joinBtn) joinBtn.setAttribute('style', 'display: none !important;');
-                if (dashBtn) dashBtn.setAttribute('style', 'display: block !important;');
-            } else if (cachedState === 'out') {
-                if (joinBtn) joinBtn.setAttribute('style', 'display: block !important;');
-                if (dashBtn) dashBtn.setAttribute('style', 'display: none !important;');
-            }
-
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    // Update Cache
-                    localStorage.setItem('learnora_auth_state', 'in');
-                    // User is signed in
-                    if (joinBtn) joinBtn.setAttribute('style', 'display: none !important;');
-                    if (dashBtn) dashBtn.setAttribute('style', 'display: block !important;');
-                    updateCartBadge(user.uid);
-                } else {
-                    // Update Cache
-                    localStorage.setItem('learnora_auth_state', 'out');
-                    // User is signed out
-                    if (joinBtn) joinBtn.setAttribute('style', 'display: block !important;');
-                    if (dashBtn) dashBtn.setAttribute('style', 'display: none !important;');
-                    if (cartBadge) cartBadge.style.display = 'none';
+            // --- INSTANT ENROLLMENT LOGIC (TESTING BYPASS) ---
+            window.enrollCourse = function(courseId, courseName, price) {
+                const user = auth.currentUser;
+                if (!user) {
+                    localStorage.setItem('redirect_after_auth', window.location.pathname);
+                    window.location.href = '/auth';
+                    return;
                 }
-            });
 
-            // --- ENROLLMENT AUTH INTERCEPTOR ---
+                const db = firebase.database();
+                const enrollmentData = {
+                    id: courseId,
+                    name: courseName,
+                    price: price,
+                    progress: 0,
+                    enrolledAt: Date.now()
+                };
+
+                const paymentData = {
+                    transactionId: 'TEST-' + Date.now(),
+                    courseName: courseName,
+                    amount: price,
+                    status: 'Completed',
+                    date: new Date().toLocaleDateString(),
+                    timestamp: Date.now()
+                };
+
+                // Add to enrolled courses and payment history
+                const updates = {};
+                updates['/users/' + user.uid + '/courses/' + courseId] = enrollmentData;
+                updates['/users/' + user.uid + '/payments/' + paymentData.transactionId] = paymentData;
+
+                db.ref().update(updates)
+                    .then(() => {
+                        showNotification('Success', `Successfully joined ${courseName}!`, 'success');
+                        setTimeout(() => {
+                            window.location.href = '/learn/' + courseId;
+                        }, 1000);
+                    })
+                    .catch(err => {
+                        console.error("Enrollment error:", err);
+                        showNotification('Error', "Failed to join course. Please try again.", 'error');
+                    });
+            };
+
+            // --- GLOBAL NOTIFICATION SYSTEM ---
+            window.showNotification = function(title, message, type = 'info') {
+                const container = document.getElementById('notification-container');
+                if (!container) return;
+                
+                const notification = document.createElement('div');
+                notification.className = `thm-notification ${type}`;
+                
+                let icon = 'fa-info-circle';
+                if (type === 'success') icon = 'fa-check-circle';
+                if (type === 'error') icon = 'fa-times-circle';
+                if (type === 'hint') icon = 'fa-lightbulb';
+                
+                notification.innerHTML = `
+                    <div class="thm-notification-header">
+                        <div class="thm-notification-title">
+                            <i class="fa ${icon}"></i>
+                            ${title}
+                        </div>
+                        <button class="thm-notification-close">&times;</button>
+                    </div>
+                    <div class="thm-notification-body">${message}</div>
+                `;
+                
+                container.appendChild(notification);
+                
+                const closeBtn = notification.querySelector('.thm-notification-close');
+                closeBtn.onclick = () => {
+                    notification.style.animation = 'slideOut 0.3s ease-in forwards';
+                    setTimeout(() => notification.remove(), 300);
+                };
+                
+                // Auto remove
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.style.animation = 'slideOut 0.3s ease-in forwards';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 5000);
+            };
+
+            // --- ENROLLMENT AUTH INTERCEPTOR & BYPASS ---
             document.addEventListener('click', (e) => {
                 const target = e.target.closest('a');
                 if (target && target.getAttribute('href') && target.getAttribute('href').startsWith('/payment')) {
-                    if (!auth.currentUser) {
-                        e.preventDefault();
-                        const dest = target.getAttribute('href');
-                        // Optional: Store the destination so we can redirect back after login
-                        localStorage.setItem('redirect_after_auth', dest);
-                        window.location.href = '/auth';
-                    }
+                    e.preventDefault();
+                    
+                    const urlParams = new URLSearchParams(target.getAttribute('href').split('?')[1]);
+                    const courseName = urlParams.get('course');
+                    const price = urlParams.get('price');
+                    
+                    // Derive courseId from name for dummy data if not present (simple slugify)
+                    const courseId = courseName.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '');
+                    
+                    window.enrollCourse(courseId, courseName, price);
                 }
             });
+
         })();
     </script>
+</body>

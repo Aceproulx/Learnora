@@ -1,3 +1,20 @@
+// Body Scroll Lock for mobile menu (Vanilla JS for Bootstrap 5)
+// Attached to document to catch events from any navbar on the page
+document.addEventListener('show.bs.collapse', function (e) {
+    if (e.target.id === 'navbarCollapse') {
+        console.log('Menu Opening: Locking Scroll');
+        document.documentElement.classList.add('menu-open');
+        document.body.classList.add('menu-open');
+    }
+});
+document.addEventListener('hide.bs.collapse', function (e) {
+    if (e.target.id === 'navbarCollapse') {
+        console.log('Menu Closing: Unlocking Scroll');
+        document.documentElement.classList.remove('menu-open');
+        document.body.classList.remove('menu-open');
+    }
+});
+
 (function ($) {
     "use strict";
 
@@ -18,12 +35,17 @@
 
 
     // Sticky Navbar
+    let lastScrollTop = 0;
     $(window).scroll(function () {
-        if ($(this).scrollTop() > 300) {
-            $('.sticky-top').css('top', '0px');
-        } else {
+        let st = $(this).scrollTop();
+        if (st > lastScrollTop && st > 100) {
+            // Scrolling down
             $('.sticky-top').css('top', '-100px');
+        } else {
+            // Scrolling up
+            $('.sticky-top').css('top', '0px');
         }
+        lastScrollTop = st;
     });
     
     

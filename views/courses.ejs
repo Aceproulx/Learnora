@@ -21,7 +21,7 @@
 
     <!-- Courses Start -->
     <div class="container-xxl py-5">
-        <div class="container">
+        <div class="container thm-task-container">
             <div class="text-center">
                 <h6 class="section-title bg-white text-center text-primary px-3">Courses</h6>
                 <h1 class="mb-5">Popular Courses</h1>
@@ -96,11 +96,6 @@
                     let newlyVisible = 0;
                     for (let i = visibleCount; i < courseCards.length && newlyVisible < 3; i++) {
                         courseCards[i].style.display = 'block';
-                        /* 
-                        if (typeof WOW !== 'undefined') {
-                            new WOW().init();
-                        }
-                        */
                         newlyVisible++;
                     }
                     visibleCount += newlyVisible;
@@ -124,23 +119,19 @@
                 return;
             }
 
-            const cartItem = {
-                courseId,
-                name,
-                price,
-                image,
-                instructor,
-                timestamp: Date.now()
-            };
-
-            db.ref('users/' + user.uid + '/cart/' + courseId).set(cartItem)
-                .then(() => {
-                    alert(`${name} added to cart!`);
-                })
-                .catch(error => {
-                    console.error("Error adding to cart:", error);
-                    alert("Failed to add to cart. Try again.");
-                });
+            db.ref('users/' + user.uid + '/cart/' + courseId).set({
+                id: courseId,
+                name: name,
+                price: price,
+                image: image,
+                instructor: instructor,
+                addedAt: Date.now()
+            }).then(() => {
+                showNotification('Cart Updated', `${name} added to cart!`, 'success');
+            }).catch(err => {
+                console.error(err);
+                showNotification('Error', "Failed to add to cart. Try again.", 'error');
+            });
         }
     </script>
 

@@ -75,57 +75,166 @@
         /* Content Area */
         .content-area {
             flex: 1;
-            padding: 30px;
+            padding: 40px 20px;
+            background-color: #f8fafc;
+        }
+
+        .settings-header {
+            margin-bottom: 30px;
+        }
+
+        .settings-header h2 {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 10px;
         }
 
         .settings-card {
             background: #fff;
-            padding: 40px 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+            overflow: hidden;
             margin-bottom: 30px;
         }
 
-        .profile-pic-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 30px;
+        .card-section-title {
+            padding: 25px 30px;
+            background: #fcfcfc;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        .profile-pic {
+        .card-section-title i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .card-section-title h5 {
+            margin: 0;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .card-content {
+            padding: 30px;
+        }
+
+        .profile-upload-section {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .profile-avatar-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .profile-avatar {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
+            border-radius: 25px;
             object-fit: cover;
-            border: 4px solid #fff;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid #fff;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
-        .edit-pic-btn {
+        .avatar-badge {
             position: absolute;
-            bottom: 0;
-            right: 0;
+            bottom: -5px;
+            right: -5px;
             background: var(--primary);
             color: #fff;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            border: 2px solid #fff;
+            border: 3px solid #fff;
+            font-size: 0.8rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-group-modern {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group-modern i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
             transition: 0.3s;
         }
 
-        .edit-pic-btn:hover {
-            transform: scale(1.1);
+        .form-control-modern {
+            padding: 14px 14px 14px 48px;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            font-weight: 500;
+            color: #1e293b;
+            transition: 0.3s;
+            width: 100%;
         }
 
-        @media (max-width: 991.98px) {
+        .form-control-modern:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(6, 187, 204, 0.1);
+            outline: none;
+        }
+
+        .form-control-modern:focus + i {
+            color: var(--primary);
+        }
+
+        .form-control-modern:disabled {
+            background-color: #f1f5f9;
+            color: #94a3b8;
+        }
+
+        .btn-save-modern {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-weight: 700;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(6, 187, 204, 0.3);
+        }
+
+        .btn-save-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 187, 204, 0.4);
+            background: #05a8b9;
+        }
+
+        @media (max-width: 768px) {
+            .profile-upload-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
             .content-area {
-                padding: 10px 15px;
+                padding: 20px 15px;
+            }
+            .card-content {
+                padding: 20px;
             }
         }
     </style>
@@ -149,55 +258,108 @@
 
         <!-- Content Area Start -->
         <div class="content-area">
-            <div class="container-fluid">
-                <div class="settings-card">
-                    <h3 class="mb-4">Account Settings</h3>
-                    
-                    <div class="profile-pic-container">
-                        <img src="/img/default.png" alt="Profile" class="profile-pic" id="profileImg">
-                    </div>
+            <div class="container">
+                <div class="settings-header">
+                    <h2>Account Settings</h2>
+                    <p class="text-muted">Manage your personal information and security settings.</p>
+                </div>
 
-                    <form id="settingsForm">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="firstName" placeholder="First Name">
-                                    <label for="firstName">First Name</label>
+                <form id="settingsForm">
+                    <!-- Personal Info Card -->
+                    <div class="settings-card">
+                        <div class="card-section-title">
+                            <i class="fa fa-user-circle"></i>
+                            <h5>Personal Information</h5>
+                        </div>
+                        <div class="card-content">
+                            <div class="profile-upload-section">
+                                <div class="profile-avatar-wrapper">
+                                    <img src="/img/default.png" alt="Profile" class="profile-avatar" id="profileImg">
+                                    <div class="avatar-badge">
+                                        <i class="fa fa-camera"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 fw-bold">Profile Picture</h6>
+                                    <p class="text-muted small mb-0">PNG, JPG or GIF. Max size of 800K</p>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="lastName" placeholder="Last Name">
-                                    <label for="lastName">Last Name</label>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">First Name</label>
+                                    <div class="input-group-modern">
+                                        <input type="text" class="form-control-modern" id="firstName" placeholder="e.g. John">
+                                        <i class="fa fa-user"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="email" class="form-control" id="email" placeholder="Email Address" disabled>
-                                    <label for="email">Email Address (Cannot be changed)</label>
+                                <div class="col-md-6">
+                                    <label class="form-label">Last Name</label>
+                                    <div class="input-group-modern">
+                                        <input type="text" class="form-control-modern" id="lastName" placeholder="e.g. Doe">
+                                        <i class="fa fa-user"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-12 mt-4">
-                                <h5 class="mb-3">Update Password</h5>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" id="newPassword" placeholder="New Password">
-                                    <label for="newPassword">New Password</label>
+                                <div class="col-12">
+                                    <label class="form-label">Email Address</label>
+                                    <div class="input-group-modern">
+                                        <input type="email" class="form-control-modern" id="email" placeholder="email@example.com">
+                                        <i class="fa fa-envelope"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password">
-                                    <label for="confirmPassword">Confirm Password</label>
-                                </div>
-                            </div>
-                            <div class="col-12 mt-4 text-center">
-                                <button type="submit" class="btn btn-primary py-3 px-5">Save All Changes</button>
                             </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <!-- Password Card -->
+                    <div class="settings-card">
+                        <div class="card-section-title">
+                            <i class="fa fa-shield-alt"></i>
+                            <h5>Security & Password</h5>
+                        </div>
+                        <div class="card-content">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">New Password</label>
+                                    <div class="input-group-modern">
+                                        <input type="password" class="form-control-modern" id="newPassword" placeholder="••••••••">
+                                        <i class="fa fa-lock"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <div class="input-group-modern">
+                                        <input type="password" class="form-control-modern" id="confirmPassword" placeholder="••••••••">
+                                        <i class="fa fa-shield-alt"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Actions Card -->
+                    <div class="settings-card border-danger" style="border-width: 1px; background-color: #fff5f5;">
+                        <div class="card-section-title" style="background: #fffafa;">
+                            <i class="fa fa-door-open text-danger"></i>
+                            <h5 class="text-danger">Account Actions</h5>
+                        </div>
+                        <div class="card-content d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div>
+                                <h6 class="mb-1 fw-bold">Sign Out</h6>
+                                <p class="text-muted small mb-0">Securely log out of your Learnora account.</p>
+                            </div>
+                            <button type="button" class="btn btn-outline-danger px-4 py-2 fw-bold" id="logoutBtn" style="border-radius: 10px;">
+                                <i class="fa fa-sign-out-alt me-2"></i> Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-end mb-5">
+                        <button type="submit" class="btn-save-modern">
+                            <i class="fa fa-save me-2"></i> Save All Changes
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -240,24 +402,29 @@
 
     <script>
         const spinner = document.getElementById('spinner');
-        const firebaseConfig = JSON.parse('<%- JSON.stringify(firebaseConfig) %>');
-        firebase.initializeApp(firebaseConfig);
+        const firebaseConfig = JSON.parse(document.getElementById('firebase-config').textContent);
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
 
         auth.onAuthStateChanged(user => {
             if (spinner) spinner.classList.remove('show');
             if (user) {
-                document.getElementById('userName').innerText = user.displayName || 'Student';
-                document.getElementById('email').value = user.email;
+                // Pre-fill fields
+                document.getElementById('email').value = user.email || '';
                 
-                if (user.displayName) {
-                    const names = user.displayName.split(' ');
-                    document.getElementById('firstName').value = names[0] || '';
-                    document.getElementById('lastName').value = names.slice(1).join(' ') || '';
-                }
-            } else {
-                // window.location.href = '/auth';
+                // Try to get profile from DB for more accurate names
+                db.ref('users/' + user.uid + '/profile').once('value').then(snapshot => {
+                    const profile = snapshot.val();
+                    if (profile) {
+                        document.getElementById('firstName').value = profile.firstName || '';
+                        document.getElementById('lastName').value = profile.lastName || '';
+                    } else if (user.displayName) {
+                        const names = user.displayName.split(' ');
+                        document.getElementById('firstName').value = names[0] || '';
+                        document.getElementById('lastName').value = names.slice(1).join(' ') || '';
+                    }
+                });
             }
         });
 
@@ -268,18 +435,23 @@
 
             const fname = document.getElementById('firstName').value;
             const lname = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
             const newPass = document.getElementById('newPassword').value;
             const confPass = document.getElementById('confirmPassword').value;
 
             try {
-                // Update display name
-                if (fname || lname) {
-                    await user.updateProfile({ displayName: `${fname} ${lname}`.trim() });
-                    await db.ref(`users/${user.uid}`).update({
-                        firstName: fname,
-                        lastName: lname,
-                        displayName: `${fname} ${lname}`.trim()
-                    });
+                // Update display name and database profile
+                const displayName = `${fname} ${lname}`.trim();
+                await user.updateProfile({ displayName });
+                await db.ref(`users/${user.uid}/profile`).update({
+                    firstName: fname,
+                    lastName: lname,
+                    displayName: displayName
+                });
+
+                // Update email if changed
+                if (email && email !== user.email) {
+                    await user.updateEmail(email);
                 }
 
                 // Update password
@@ -288,9 +460,14 @@
                     await user.updatePassword(newPass);
                 }
 
-                alert('Settings updated successfully!');
+                showNotification('Success', 'Settings updated successfully!', 'success');
             } catch (err) {
-                alert('Error updating settings: ' + err.message);
+                console.error(err);
+                if (err.code === 'auth/requires-recent-login') {
+                    showNotification('Security', 'Please logout and login again to change sensitive info.', 'hint');
+                } else {
+                    showNotification('Error', err.message, 'error');
+                }
             }
         });
 

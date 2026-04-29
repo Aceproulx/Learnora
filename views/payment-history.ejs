@@ -253,7 +253,7 @@
 
     <!-- Firebase -->
     <script>
-        const firebaseConfig = JSON.parse('<%- JSON.stringify(firebaseConfig) %>');
+        const firebaseConfig = JSON.parse(document.getElementById('firebase-config').textContent);
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
@@ -296,7 +296,7 @@
                         <td data-label="Course">${payment.courseName}</td>
                         <td data-label="Amount">${payment.amount}</td>
                         <td data-label="Status"><span class="status-badge status-success">${payment.status}</span></td>
-                        <td data-label="Action"><button class="btn btn-sm btn-outline-primary" onclick="alert('Digital Invoice for ${payment.transactionId} coming soon!')">Invoice</button></td>
+                        <td data-label="Action"><button class="btn btn-sm btn-outline-primary" onclick="showNotification('Coming Soon', 'Digital Invoice for ${payment.transactionId} coming soon!', 'info')">Invoice</button></td>
                     `;
                     tableBody.appendChild(row);
                 });

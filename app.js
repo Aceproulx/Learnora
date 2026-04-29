@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 // Firebase Configuration
 const firebaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -131,7 +132,9 @@ app.get('/team', (req, res) => {
 app.get('/course/:id', async (req, res) => {
     const { id } = req.params;
     const courses = await getCourses();
-    const course = Array.isArray(courses) ? courses.find(c => c.id === id) : Object.values(courses).find(c => c.id === id);
+    const course = Array.isArray(courses) 
+        ? courses.find(c => String(c.id).trim() === String(id).trim()) 
+        : Object.values(courses).find(c => String(c.id).trim() === String(id).trim());
 
     if (!course) {
         return res.status(404).render('404', { title: 'Course Not Found', currentPage: '404' });
@@ -141,6 +144,38 @@ app.get('/course/:id', async (req, res) => {
         title: course.name,
         currentPage: 'courses',
         course
+    });
+});
+
+// Learn Course Route
+app.get('/learn/:id', (req, res) => {
+    const { id } = req.params;
+    const courseContentPath = path.join(__dirname, 'data', 'course-content.json');
+    
+    fs.readFile(courseContentPath, 'utf8', (err, data) => {
+        if (err) {
+            console.error("Error reading course content:", err);
+            return res.status(500).render('404', { title: 'Error', currentPage: '404' });
+        }
+        
+        try {
+            const allCourses = JSON.parse(data);
+            const course = allCourses.find(c => String(c.id).trim() === String(id).trim());
+            
+            if (!course) {
+                console.log(`Course ID "${id}" not found in course-content.json`);
+                return res.status(404).render('404', { title: 'Course Not Found', currentPage: '404' });
+            }
+            
+            res.render('course-view', {
+                title: course.name,
+                currentPage: 'courses',
+                course
+            });
+        } catch (parseErr) {
+            console.error("Error parsing course content:", parseErr);
+            return res.status(500).render('404', { title: 'Data Parse Error', currentPage: '404' });
+        }
     });
 });
 

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "offensive-security-101",
+    "name": "Offensive Security 101",
+    "tasks": [
+      {
+        "taskId": 1,
+        "title": "What is Offensive Security?",
+        "content": [
+          { "type": "text", "value": "<h4>Beginning Your Learning Journey</h4>" },
+          { "type": "text", "value": "<p>\"To outsmart a hacker, you need to think like one.\"</p>" },
+          { "type": "text", "value": "<p>This is the core of \"Offensive Security.\" It involves breaking into computer systems, exploiting software bugs, and finding loopholes in applications to gain unauthorized access. The goal is to understand hacker tactics and enhance our system defences.</p>" },
+          { "type": "video", "value": "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+          { "type": "text", "value": "<p>Check the attached PDF for more details on the offensive security mindset.</p>" },
+          { "type": "pdf", "value": "/docs/offensive-security-intro.pdf" }
+        ],
+        "exercises": [
+          {
+            "id": "q1",
+            "question": "Which of the following options better represents the process where you simulate a hacker's actions to find vulnerabilities in a system?",
+            "options": ["Offensive Security", "Defensive Security"],
+            "answer": "Offensive Security",
+            "hint": "Think about attacking vs defending."
+          }
+        ]
+      },
+      {
+        "taskId": 2,
+        "title": "Hacking your first machine",
+        "content": [
+          { "type": "text", "value": "<p>In this task, we will explore the basics of machine exploitation.</p>" }
+        ],
+        "exercises": [
+          {
+            "id": "q2",
+            "question": "What is the common term for a computer that has been compromised?",
+            "answer": "Pwned",
+            "hint": "Starts with 'P'."
+          }
+        ]
+      }
+    ]
+  }
+]

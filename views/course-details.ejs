@@ -86,8 +86,8 @@
                                 <li class="mb-2"><i class="fa fa-certificate text-primary me-2"></i>Completion
                                     Certificate</li>
                             </ul>
-                            <a href="/payment?course=<%= course.name %>&price=<%= course.price %>"
-                                class="btn btn-primary w-100 py-3 rounded-pill fw-bold mb-2">Enroll Now</a>
+                            <button onclick="enrollCourse('<%= course.id %>', '<%= course.name %>', '<%= course.price %>')"
+                                class="btn btn-primary w-100 py-3 rounded-pill fw-bold mb-2">Enroll Now</button>
                             <button onclick="addToCart('<%= course.id %>', '<%= course.name %>', '<%= course.price %>', '<%= course.image %>', '<%= course.instructor %>')" 
                                 class="btn btn-outline-primary w-100 py-3 rounded-pill fw-bold">
                                 <i class="fa fa-shopping-cart me-2"></i>Add to Cart
@@ -124,7 +124,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script>
         function addToCart(courseId, name, price, image, instructor) {
-            const firebaseConfig = JSON.parse('<%- JSON.stringify(firebaseConfig) %>');
+            const firebaseConfig = JSON.parse(document.getElementById('firebase-config').textContent);
             if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
             const auth = firebase.auth();
             const db = firebase.database();
@@ -145,13 +145,13 @@
                 timestamp: Date.now()
             };
 
-            db.ref('users/' + user.uid + '/cart/' + courseId).set(cartItem)
+                db.ref('users/' + user.uid + '/cart/' + courseId).set(cartItem)
                 .then(() => {
-                    alert(`${name} added to cart!`);
+                    showNotification('Cart Updated', `${name} added to cart!`, 'success');
                 })
                 .catch(error => {
                     console.error("Error adding to cart:", error);
-                    alert("Failed to add to cart. Try again.");
+                    showNotification('Error', "Failed to add to cart. Try again.", 'error');
                 });
         }
     </script>

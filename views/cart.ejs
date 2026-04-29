@@ -72,7 +72,7 @@
 
 <script>
     (function() {
-        const firebaseConfig = JSON.parse('<%- JSON.stringify(firebaseConfig) %>');
+        const firebaseConfig = JSON.parse(document.getElementById('firebase-config').textContent);
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();

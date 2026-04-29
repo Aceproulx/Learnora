@@ -115,6 +115,16 @@
     height: 75px;
 }
 
+@media (max-width: 991.98px) {
+    .navbar-light .navbar-brand {
+        height: 60px;
+    }
+
+    .navbar-light .navbar-brand h2 {
+        font-size: 1.5rem;
+    }
+}
+
 @media (min-width: 1200px) {
     .navbar-light a.btn {
         height: 75px;
@@ -127,7 +137,7 @@
 }
 
 .navbar-light.sticky-top {
-    top: -100px;
+    top: 0;
     transition: .5s;
 }
 
@@ -436,4 +446,267 @@
     margin-right: 0;
     padding-right: 0;
     border-right: none;
+}
+
+/* TryHackMe Style Course Layout */
+.thm-task-container {
+    max-width: 1000px;
+    margin: 40px auto;
+}
+
+.thm-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+    overflow: hidden;
+    border: 1px solid #eef0f2;
+    transition: transform 0.2s;
+}
+
+.thm-card-header {
+    background: #1d2633;
+    color: #fff;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.3s;
+}
+
+.thm-card-header[aria-expanded="true"] .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.thm-card-header .fa-chevron-down {
+    transition: transform 0.3s;
+}
+
+.thm-card-header h5 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff;
+}
+
+.thm-card-header .task-number {
+    background: #ff4136;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-right: 12px;
+}
+
+.thm-card-body {
+    padding: 35px;
+    border-left: 5px solid #ff4136; /* Default: Red for uncompleted */
+}
+
+/* If the parent card is marked as completed, turn the border green */
+.task-completed-ui .thm-card-body {
+    border-left-color: #28a745 !important;
+}
+
+.thm-content {
+    line-height: 1.8;
+    color: #333;
+    font-size: 1.05rem;
+    margin-bottom: 35px;
+}
+
+.thm-content h4 {
+    color: #1d2633;
+    font-weight: 700;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.thm-exercise-section {
+    background: #f9fafb;
+    border-top: 1px solid #edf2f7;
+    padding: 25px 35px;
+    border-radius: 0 0 8px 8px;
+}
+
+.thm-question {
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #2d3748;
+    font-size: 1rem;
+}
+
+.thm-input-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.thm-input {
+    flex-grow: 1;
+    padding: 12px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.thm-input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.thm-btn-submit {
+    background: #fff;
+    border: 2px solid #007bff;
+    color: #007bff;
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.thm-btn-submit:hover {
+    background: #007bff;
+    color: #fff;
+}
+
+.thm-hint-btn {
+    background: none;
+    border: 2px solid #e2e8f0;
+    color: #a0aec0;
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.thm-hint-btn:hover {
+    color: #ffba08;
+    border-color: #ffba08;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    margin: 30px 0;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.pdf-container {
+    background: #ebf8ff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px dashed #90cdf4;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.pdf-container i {
+    color: #3182ce;
+}
+
+.task-completed-ui .task-number {
+    background: #28a745 !important;
+}
+
+/* Modern Notification/Toast */
+#notification-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.thm-notification {
+    background: #1d2633;
+    color: #fff;
+    width: 350px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 15px;
+    pointer-events: auto;
+    animation: slideIn 0.3s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.thm-notification.success { border-left: 5px solid #28a745; }
+.thm-notification.error { border-left: 5px solid #ff4136; }
+.thm-notification.info { border-left: 5px solid #007bff; }
+.thm-notification.hint { border-left: 5px solid #ffba08; }
+
+.thm-notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.thm-notification-title {
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.thm-notification-close {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.thm-notification-body {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #e2e8f0;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(100%); opacity: 0; }
+}
+
+/* Prevent body scroll when mobile menu is open */
+html.menu-open, body.menu-open {
+    overflow: hidden !important;
+    height: 100% !important;
+    width: 100% !important;
+    position: fixed !important;
 }
