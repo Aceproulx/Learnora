@@ -3,17 +3,87 @@
     <a href="/" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
         <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>Learnora-acadamy</h2>
     </a>
-    <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+    <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" style="border:none;">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
-        <div class="navbar-nav ms-auto p-4 p-lg-0 align-items-center">
-            <a href="/courses" class="nav-item nav-link">Courses</a>
+        <div class="navbar-nav ms-auto p-2 p-lg-0 align-items-lg-center">
+            <!-- Mobile Sidebar Links -->
+            <div class="d-lg-none w-100">
+                <hr class="my-1 text-secondary">
+                <a href="/dashboard" class="nav-item nav-link py-2 <%= typeof currentPage !== 'undefined' && currentPage === 'dashboard' ? 'active text-primary fw-bold' : '' %>">
+                    <i class="fa fa-tachometer-alt me-2"></i>DASHBOARD
+                </a>
+                <a href="/user-courses" class="nav-item nav-link py-2 <%= typeof currentPage !== 'undefined' && currentPage === 'user-courses' ? 'active text-primary fw-bold' : '' %>">
+                    <i class="fa fa-book me-2"></i>MY COURSES
+                </a>
+                <a href="/certifications" class="nav-item nav-link py-2 <%= typeof currentPage !== 'undefined' && currentPage === 'certifications' ? 'active text-primary fw-bold' : '' %>">
+                    <i class="fa fa-certificate me-2"></i>CERTIFICATES
+                </a>
+                <a href="/payment-history" class="nav-item nav-link py-2 <%= typeof currentPage !== 'undefined' && currentPage === 'payments' ? 'active text-primary fw-bold' : '' %>">
+                    <i class="fa fa-wallet me-2"></i>PAYMENT HISTORY
+                </a>
+                <a href="/settings" class="nav-item nav-link py-2 <%= typeof currentPage !== 'undefined' && currentPage === 'settings' ? 'active text-primary fw-bold' : '' %>">
+                    <i class="fa fa-cog me-2"></i>SETTINGS
+                </a>
+                <a href="/cart" class="nav-item nav-link py-2 <%= typeof currentPage !== 'undefined' && currentPage === 'cart' ? 'active text-primary fw-bold' : '' %>">
+                    <i class="fa fa-shopping-cart me-2"></i>CART
+                </a>
+                <hr class="my-1 text-secondary">
+            </div>
+
+            <a href="/courses" class="nav-item nav-link d-none d-lg-block">Courses</a>
+            <a href="/cart" class="nav-item nav-link d-none d-lg-block position-relative px-3 <%= typeof currentPage !== 'undefined' && currentPage === 'cart' ? 'active' : '' %>">
+                <i class="fa fa-shopping-cart fs-5"></i>
+                <span id="cart-badge-dash" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none; font-size: 10px; margin-top: 15px;">
+                    0
+                </span>
+            </a>
             <span class="nav-item nav-link fw-bold text-dark mx-3 d-none d-lg-block" id="userName">Student</span>
-            <button class="btn btn-outline-primary py-2 px-3 m-3" id="logoutBtn">
+            <button class="btn btn-outline-primary py-2 px-3 m-lg-3 my-2" id="logoutBtn">
                 <i class="fa fa-sign-out-alt me-1"></i> Logout
             </button>
         </div>
     </div>
 </nav>
+
+<style>
+    /* Remove grey highlight from navbar toggler */
+    .navbar-toggler:focus,
+    .navbar-toggler:active,
+    .navbar-toggler:hover {
+        outline: none;
+        box-shadow: none;
+        border: none;
+    }
+</style>
+
+<script>
+    (function() {
+        const firebaseConfig = JSON.parse('<%- JSON.stringify(firebaseConfig) %>');
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+        const cartBadge = document.getElementById('cart-badge-dash');
+
+        function updateCartBadge(uid) {
+            db.ref('users/' + uid + '/cart').on('value', (snapshot) => {
+                const cart = snapshot.val();
+                if (cart && cartBadge) {
+                    const count = Object.keys(cart).length;
+                    cartBadge.innerText = count;
+                    cartBadge.style.display = 'block';
+                } else if (cartBadge) {
+                    cartBadge.style.display = 'none';
+                }
+            });
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                updateCartBadge(user.uid);
+            }
+        });
+    })();
+</script>
 <!-- Navbar End -->

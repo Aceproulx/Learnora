@@ -50,6 +50,12 @@
                 <a href="/about" class="nav-item nav-link <%= currentPage === 'about' ? 'active' : '' %>">About</a>
                 <a href="/courses" class="nav-item nav-link <%= currentPage === 'courses' ? 'active' : '' %>">Courses</a>
                 <a href="/contact" class="nav-item nav-link <%= currentPage === 'contact' ? 'active' : '' %>">Contact</a>
+                <a href="/cart" class="nav-item nav-link position-relative px-3 <%= currentPage === 'cart' ? 'active' : '' %>">
+                    <i class="fa fa-shopping-cart fs-5"></i>
+                    <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none; font-size: 10px; margin-top: 15px;">
+                        0
+                    </span>
+                </a>
             </div>
             <div id="nav-auth-buttons" class="px-4 px-xl-0 pb-4 pb-xl-0">
                 <!-- Join Now Button -->
@@ -67,11 +73,12 @@
     <!-- Firebase SDK (v9 compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <script>
         (function() {
             // Configuration injected from the server
-            const firebaseConfig = <%- JSON.stringify(firebaseConfig) %>;
+            const firebaseConfig = JSON.parse('<%- JSON.stringify(firebaseConfig) %>');
             
             // Initialize Firebase if not already initialized
             if (!firebase.apps.length) {
@@ -81,6 +88,22 @@
             const auth = firebase.auth();
             const joinBtn = document.getElementById('join-now-btn');
             const dashBtn = document.getElementById('dashboard-btn');
+            const cartBadge = document.getElementById('cart-badge');
+
+            // --- CART BADGE LOGIC ---
+            function updateCartBadge(uid) {
+                if (!firebase.apps.length) return;
+                firebase.database().ref('users/' + uid + '/cart').on('value', (snapshot) => {
+                    const cart = snapshot.val();
+                    if (cart && cartBadge) {
+                        const count = Object.keys(cart).length;
+                        cartBadge.innerText = count;
+                        cartBadge.style.display = 'block';
+                    } else if (cartBadge) {
+                        cartBadge.style.display = 'none';
+                    }
+                });
+            }
 
             // --- FLICKER PREVENTION: Immediate UI update from Cache ---
             const cachedState = localStorage.getItem('learnora_auth_state');
@@ -99,12 +122,14 @@
                     // User is signed in
                     if (joinBtn) joinBtn.setAttribute('style', 'display: none !important;');
                     if (dashBtn) dashBtn.setAttribute('style', 'display: block !important;');
+                    updateCartBadge(user.uid);
                 } else {
                     // Update Cache
                     localStorage.setItem('learnora_auth_state', 'out');
                     // User is signed out
                     if (joinBtn) joinBtn.setAttribute('style', 'display: block !important;');
                     if (dashBtn) dashBtn.setAttribute('style', 'display: none !important;');
+                    if (cartBadge) cartBadge.style.display = 'none';
                 }
             });
 

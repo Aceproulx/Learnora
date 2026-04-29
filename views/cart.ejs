@@ -1,0 +1,167 @@
+<%- include('partials/header', { title: 'Shopping Cart', currentPage: 'cart' }) %>
+
+<!-- Header Start -->
+<div class="container-fluid bg-primary py-5 mb-5 page-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <h1 class="display-3 text-white">Shopping Cart</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a class="text-white" href="/">Home</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Cart</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Header End -->
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Your Selection</h6>
+            <h1 class="mb-5">Courses in Your Cart</h1>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-8">
+                <div class="cart-container bg-light p-4 rounded shadow-sm">
+                    <div id="cart-items" class="mb-4">
+                        <!-- Items populated by JS -->
+                        <div class="text-center py-5" id="cart-loading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="cart-empty" style="display: none;" class="text-center py-5">
+                        <i class="fa fa-shopping-cart fa-3x text-muted mb-3"></i>
+                        <h3>Your cart is empty</h3>
+                        <p class="text-muted">Explore our courses and add some to your cart!</p>
+                        <a href="/courses" class="btn btn-primary px-4 py-2 mt-2">Browse Courses</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4 sticky-top" style="top: 100px;">
+                    <h4 class="mb-4">Order Summary</h4>
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                        <span>Items Count</span>
+                        <span id="cart-count-summary" class="fw-bold">0</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-4 pt-2">
+                        <h5 class="m-0">Total</h5>
+                        <h5 class="m-0 text-primary">$<span id="cart-total">0.00</span></h5>
+                    </div>
+                    <button id="checkout-btn" class="btn btn-primary w-100 py-3 rounded-pill fw-bold" disabled>Proceed to Checkout</button>
+                    <p class="text-center mt-3 mb-0 small text-muted"><i class="fa fa-lock me-1"></i> Secure Checkout</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase SDK (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+    (function() {
+        const firebaseConfig = JSON.parse('<%- JSON.stringify(firebaseConfig) %>');
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        const itemsContainer = document.getElementById('cart-items');
+        const emptyContainer = document.getElementById('cart-empty');
+        const loadingSpinner = document.getElementById('cart-loading');
+        const totalDisplay = document.getElementById('cart-total');
+        const countDisplay = document.getElementById('cart-count-summary');
+        const checkoutBtn = document.getElementById('checkout-btn');
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loadCart(user.uid);
+            } else {
+                localStorage.setItem('redirect_after_auth', '/cart');
+                window.location.href = '/auth';
+            }
+        });
+
+        function loadCart(uid) {
+            db.ref('users/' + uid + '/cart').on('value', snapshot => {
+                const cartData = snapshot.val();
+                itemsContainer.innerHTML = '';
+                
+                if (!cartData) {
+                    loadingSpinner.style.display = 'none';
+                    emptyContainer.style.display = 'block';
+                    totalDisplay.innerText = '0.00';
+                    countDisplay.innerText = '0';
+                    checkoutBtn.disabled = true;
+                    return;
+                }
+
+                emptyContainer.style.display = 'none';
+                loadingSpinner.style.display = 'none';
+                
+                let total = 0;
+                let count = 0;
+                
+                const deletePromises = [];
+
+                Object.keys(cartData).forEach(key => {
+                    const item = cartData[key];
+                    total += parseFloat(item.price);
+                    count++;
+
+                    const itemHtml = `
+                        <div class="cart-item d-flex align-items-center bg-white p-3 mb-3 rounded shadow-sm border-start border-primary border-4">
+                            <img src="${item.image}" class="rounded me-3 shadow-sm" style="width: 100px; height: 75px; object-fit: cover;">
+                            <div class="flex-grow-1">
+                                <h6 class="m-0 fw-bold">${item.name}</h6>
+                                <small class="text-muted"><i class="fa fa-user-tie me-1"></i>${item.instructor}</small>
+                            </div>
+                            <div class="text-end ms-3">
+                                <div class="fw-bold text-primary mb-2" style="font-size: 1.1rem;">$${item.price}</div>
+                                <button class="btn btn-sm btn-light text-danger rounded-pill px-3" onclick="removeFromCart('${key}')">
+                                    <i class="fa fa-trash me-1"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    itemsContainer.insertAdjacentHTML('beforeend', itemHtml);
+                });
+
+                totalDisplay.innerText = total.toFixed(2);
+                countDisplay.innerText = count;
+                checkoutBtn.disabled = false;
+            });
+        }
+
+        window.removeFromCart = function(courseId) {
+            const uid = auth.currentUser.uid;
+            db.ref('users/' + uid + '/cart/' + courseId).remove().then(() => {
+                // Success
+            }).catch(err => {
+                console.error("Error removing item:", err);
+            });
+        };
+
+        checkoutBtn.addEventListener('click', () => {
+             // For demonstration, leading to the payment page of the first item
+             // Real implementation would pass a bulk order ID
+             db.ref('users/' + auth.currentUser.uid + '/cart').once('value').then(snap => {
+                 const first = Object.values(snap.val())[0];
+                 window.location.href = `/payment?course=${encodeURIComponent(first.name)}&price=${first.price}`;
+             });
+        });
+    })();
+</script>
+
+<%- include('partials/footer') %>

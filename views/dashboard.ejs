@@ -106,17 +106,21 @@
 
         /* Mobile Adjustments */
         @media (max-width: 991.98px) {
-            .sidebar {
-                display: none;
+            .content-area {
+                padding: 10px 15px;
             }
         }
     </style>
 </head>
 
 <body>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <!-- Dashboard Header -->
-    <%- include('partials/dashboard-header') %>
+    <%- include('partials/dashboard-header', { currentPage: 'dashboard' }) %>
 
         <div class="d-flex">
             <!-- Sidebar Start -->
@@ -313,11 +317,8 @@
         <!-- page Javascript -->
         <script src="/js/main.js"></script>
 
-        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
         <script>
-            const firebaseConfig = <% - JSON.stringify(firebaseConfig) %>;
+            const firebaseConfig = JSON.parse('<%- JSON.stringify(firebaseConfig) %>');
             firebase.initializeApp(firebaseConfig);
             const auth = firebase.auth();
             const db = firebase.database();
@@ -328,7 +329,7 @@
                     document.getElementById('welcomeMsg').innerText = `Welcome back, ${user.displayName || 'Learner'}!`;
                     fetchStats(user.uid);
                 } else {
-                    window.location.href = '/auth';
+                    //window.location.href = '/auth';
                 }
             });
 

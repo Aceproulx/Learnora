@@ -96,8 +96,8 @@
         }
 
         @media (max-width: 991.98px) {
-            .sidebar {
-                display: none;
+            .content-area {
+                padding: 10px 15px;
             }
         }
     </style>
@@ -106,7 +106,7 @@
 <body>
 
     <!-- Dashboard Header -->
-    <%- include('partials/dashboard-header') %>
+    <%- include('partials/dashboard-header', { currentPage: 'certifications' }) %>
 
         <div class="d-flex">
             <!-- Sidebar Start -->
@@ -184,7 +184,7 @@
         <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
         <script>
-            const firebaseConfig = <% - JSON.stringify(firebaseConfig) %>;
+            const firebaseConfig = <%- JSON.stringify(firebaseConfig) %>;
             firebase.initializeApp(firebaseConfig);
             const auth = firebase.auth();
             const db = firebase.database();

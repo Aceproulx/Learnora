@@ -124,25 +124,23 @@
         }
 
         @media (max-width: 991.98px) {
-            .sidebar {
-                display: none;
+            .content-area {
+                padding: 10px 15px;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Spinner Start -->
-    <div id="spinner"
-        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div>
     <!-- Spinner End -->
 
+    <!-- Firebase SDKs (Required by headers) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <!-- Dashboard Header -->
-    <%- include('partials/dashboard-header') %>
+    <%- include('partials/dashboard-header', { currentPage: 'settings' }) %>
 
     <div class="d-flex">
         <!-- Sidebar Start -->
@@ -240,17 +238,15 @@
     <!-- page Javascript -->
     <script src="/js/main.js"></script>
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script>
-        const firebaseConfig = <%- JSON.stringify(firebaseConfig) %>;
+        const spinner = document.getElementById('spinner');
+        const firebaseConfig = JSON.parse('<%- JSON.stringify(firebaseConfig) %>');
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
 
         auth.onAuthStateChanged(user => {
+            if (spinner) spinner.classList.remove('show');
             if (user) {
                 document.getElementById('userName').innerText = user.displayName || 'Student';
                 document.getElementById('email').value = user.email;

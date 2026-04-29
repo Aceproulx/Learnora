@@ -76,13 +76,15 @@
         .content-area {
             flex: 1;
             padding: 30px;
+            overflow-x: hidden;
         }
 
         .payment-card {
             background: #fff;
-            padding: 30px;
+            padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
         }
 
         .status-badge {
@@ -103,17 +105,76 @@
         }
 
         @media (max-width: 991.98px) {
-            .sidebar {
-                display: none;
+            .content-area {
+                padding: 10px 15px;
+            }
+            .payment-card {
+                padding: 15px;
+            }
+            .table {
+                font-size: 13px;
+            }
+        }
+
+        /* Responsive Table for Mobile (Stacked) */
+        @media (max-width: 768px) {
+            .table-responsive {
+                border: none;
+            }
+            .table-responsive thead {
+                display: none; /* Hide header columns */
+            }
+            .table-responsive table, 
+            .table-responsive tbody, 
+            .table-responsive tr, 
+            .table-responsive td {
+                display: block;
+                width: 100%;
+            }
+            .table-responsive tr {
+                margin-bottom: 1.5rem;
+                background: #fff;
+                border: 1px solid #eef2f7;
+                border-radius: 12px;
+                padding: 15px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            }
+            .table-responsive td {
+                display: block;
+                width: 100%;
+                text-align: left;
+                padding: 15px 5px;
+                border-bottom: 1px solid #f1f5f9;
+                white-space: normal !important;
+            }
+            .table-responsive td:last-child {
+                border-bottom: none;
+            }
+            .table-responsive td::before {
+                content: attr(data-label);
+                display: block;
+                font-weight: 700;
+                text-transform: uppercase;
+                font-size: 0.7rem;
+                letter-spacing: 1px;
+                color: #06BBCC;
+                margin-bottom: 5px;
+            }
+            .status-badge {
+                margin-left: auto;
             }
         }
     </style>
 </head>
 
 <body>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <!-- Dashboard Header -->
-    <%- include('partials/dashboard-header') %>
+    <%- include('partials/dashboard-header', { currentPage: 'payments' }) %>
 
     <div class="d-flex">
         <!-- Sidebar Start -->
@@ -191,11 +252,8 @@
     <script src="/js/main.js"></script>
 
     <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script>
-        const firebaseConfig = <%- JSON.stringify(firebaseConfig) %>;
+        const firebaseConfig = JSON.parse('<%- JSON.stringify(firebaseConfig) %>');
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
@@ -233,12 +291,12 @@
                 paymentList.forEach(payment => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${payment.transactionId}</td>
-                        <td>${payment.date}</td>
-                        <td>${payment.courseName}</td>
-                        <td>${payment.amount}</td>
-                        <td><span class="status-badge status-success">${payment.status}</span></td>
-                        <td><button class="btn btn-sm btn-outline-primary" onclick="alert('Digital Invoice for ${payment.transactionId} coming soon!')">Invoice</button></td>
+                        <td data-label="Transaction ID">${payment.transactionId}</td>
+                        <td data-label="Date">${payment.date}</td>
+                        <td data-label="Course">${payment.courseName}</td>
+                        <td data-label="Amount">${payment.amount}</td>
+                        <td data-label="Status"><span class="status-badge status-success">${payment.status}</span></td>
+                        <td data-label="Action"><button class="btn btn-sm btn-outline-primary" onclick="alert('Digital Invoice for ${payment.transactionId} coming soon!')">Invoice</button></td>
                     `;
                     tableBody.appendChild(row);
                 });

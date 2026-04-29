@@ -105,6 +105,10 @@ app.get('/payment-history', (req, res) => {
     res.render('payment-history', { title: 'Payment History', currentPage: 'payments' });
 });
 
+app.get('/cart', (req, res) => {
+    res.render('cart', { title: 'Shopping Cart', currentPage: 'cart' });
+});
+
 app.get('/payment', (req, res) => {
     const { course, price } = req.query;
     res.render('payment', { title: 'Payment', course, price });

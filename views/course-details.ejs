@@ -87,7 +87,11 @@
                                     Certificate</li>
                             </ul>
                             <a href="/payment?course=<%= course.name %>&price=<%= course.price %>"
-                                class="btn btn-primary w-100 py-3 rounded-pill fw-bold">Enroll Now</a>
+                                class="btn btn-primary w-100 py-3 rounded-pill fw-bold mb-2">Enroll Now</a>
+                            <button onclick="addToCart('<%= course.id %>', '<%= course.name %>', '<%= course.price %>', '<%= course.image %>', '<%= course.instructor %>')" 
+                                class="btn btn-outline-primary w-100 py-3 rounded-pill fw-bold">
+                                <i class="fa fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
                         </div>
                     </div>
 
@@ -114,3 +118,40 @@
     </div>
 
     <%- include('partials/footer') %>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script>
+        function addToCart(courseId, name, price, image, instructor) {
+            const firebaseConfig = JSON.parse('<%- JSON.stringify(firebaseConfig) %>');
+            if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.database();
+            const user = auth.currentUser;
+
+            if (!user) {
+                localStorage.setItem('redirect_after_auth', window.location.pathname);
+                window.location.href = '/auth';
+                return;
+            }
+
+            const cartItem = {
+                courseId,
+                name,
+                price,
+                image,
+                instructor,
+                timestamp: Date.now()
+            };
+
+            db.ref('users/' + user.uid + '/cart/' + courseId).set(cartItem)
+                .then(() => {
+                    alert(`${name} added to cart!`);
+                })
+                .catch(error => {
+                    console.error("Error adding to cart:", error);
+                    alert("Failed to add to cart. Try again.");
+                });
+        }
+    </script>
