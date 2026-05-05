@@ -114,7 +114,7 @@
             const user = auth.currentUser;
 
             if (!user) {
-                localStorage.setItem('redirect_after_auth', window.location.pathname);
+                setCookie('redirect_after_auth', window.location.pathname);
                 window.location.href = '/auth';
                 return;
             }

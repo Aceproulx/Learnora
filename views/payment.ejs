@@ -1,65 +1,363 @@
-<%- include('partials/header', { title: 'Payment', currentPage: 'courses' }) %>
+<%- include('partials/header', { title: 'Payment' , currentPage: 'courses' }) %>
+
+    <style>
+        /* ── Card Flip Preview ── */
+        .cc-preview-wrapper {
+            perspective: 1000px;
+            height: 150px;
+            margin-bottom: 1.25rem;
+        }
+
+        .cc-card {
+            width: 100%;
+            height: 150px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+            border-radius: 14px;
+        }
+
+        .cc-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .cc-front,
+        .cc-back {
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            backface-visibility: hidden;
+            padding: 16px 20px;
+            color: #fff;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, .3);
+            overflow: hidden;
+        }
+
+        .cc-front::before {
+            content: '';
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .05);
+            top: -80px;
+            right: -60px;
+        }
+
+        .cc-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+        }
+
+        .cc-chip {
+            width: 34px;
+            height: 26px;
+            background: linear-gradient(135deg, #f5c842 0%, #e0a800 100%);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 2px;
+            padding: 3px;
+        }
+
+        .cc-chip span {
+            background: rgba(0, 0, 0, .15);
+            border-radius: 2px;
+        }
+
+        .cc-number {
+            font-size: 1rem;
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 10px;
+        }
+
+        .cc-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .cc-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            opacity: .65;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .cc-value {
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+        }
+
+        .cc-network {
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-style: italic;
+            opacity: .9;
+        }
+
+        /* Back strip */
+        .cc-magstrip {
+            background: #111;
+            height: 42px;
+            margin: 0 -28px 18px;
+        }
+
+        .cc-cvv-strip {
+            background: rgba(255, 255, 255, .9);
+            color: #333;
+            border-radius: 4px;
+            padding: 6px 14px;
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 3px;
+            font-size: 0.9rem;
+            width: 70%;
+            margin-left: auto;
+        }
+
+        .cc-back-network {
+            text-align: right;
+            margin-top: 8px;
+            font-weight: 700;
+            font-style: italic;
+            opacity: .7;
+        }
+
+        /* ── Form Fields ── */
+        .form-floating label {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .card-input-group .form-control {
+            border-radius: 10px;
+            border: 1.5px solid #dee2e6;
+            font-size: 0.95rem;
+            padding: 14px 16px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .card-input-group .form-control:focus {
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, .15);
+        }
+
+        /* ── Network badges ── */
+        .network-icons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .network-icons img {
+            height: 26px;
+            opacity: .5;
+            transition: opacity .2s;
+        }
+
+        .network-icons img.active {
+            opacity: 1;
+        }
+
+        /* ── Pay button ── */
+        #payBtn {
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            letter-spacing: .5px;
+            transition: transform .15s, box-shadow .15s;
+            box-shadow: 0 8px 24px rgba(67, 97, 238, .4);
+        }
+
+        #payBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(67, 97, 238, .5);
+        }
+
+        #payBtn:active {
+            transform: translateY(0);
+        }
+
+        /* ── Card header gradient ── */
+        .payment-header {
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            color: #fff;
+            border-radius: 0 0 0 0;
+            padding: 20px 24px 16px;
+        }
+
+        /* ── Print ── */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #printable-invoice,
+            #printable-invoice * {
+                visibility: visible;
+            }
+
+            #printable-invoice {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 40px;
+                background: white;
+            }
+
+            .navbar,
+            .footer,
+            .back-to-top,
+            .btn,
+            hr {
+                display: none !important;
+            }
+        }
+    </style>
 
     <div class="container-xxl py-5">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-6">
                     <div class="card shadow border-0 rounded-4 overflow-hidden">
-                        <div class="card-header bg-white border-0 pt-4 px-4">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg" alt="PayPal" style="height: 40px;">
-                                <h5 class="m-0 text-muted">Checkout</h5>
+
+                        <!-- Header -->
+                        <div class="payment-header d-flex align-items-center justify-content-between">
+                            <div>
+                                <h5 class="m-0 fw-bold">Secure Checkout</h5>
+                                <p class="m-0 small opacity-75">Credit / Debit Card</p>
                             </div>
-                            <hr>
+                            <div class="network-icons">
+                                <img id="visaLogo"
+                                    src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa">
+                                <img id="mastercardLogo"
+                                    src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+                                    alt="Mastercard">
+                                <img id="amexLogo"
+                                    src="https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg"
+                                    alt="Amex">
+                            </div>
                         </div>
+
+                        <!-- ═══ Main Content ═══ -->
                         <div class="card-body p-4" id="main-content">
-                            <h4 class="mb-4">Order Summary</h4>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Course Name:</span>
-                                <span class="fw-bold" id="courseName"><%= course || 'Selected Course' %></span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-4">
-                                <span>Price:</span>
-                                <span class="fw-bold text-primary">$<%= price || '100.00' %></span>
-                            </div>
-                            
-                            <div class="alert alert-info border-0 rounded-3 mb-4">
-                                <i class="fa fa-info-circle me-2"></i> You will be paying via a **PayPal Invoice**. Please proceed to initiate the transaction.
+
+                            <!-- Order Summary -->
+                            <div class="bg-light rounded-3 p-3 mb-4">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-muted small">Course</span>
+                                    <span class="fw-bold small" id="courseName">
+                                        <%= course || 'Selected Course' %>
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted small">Total</span>
+                                    <span class="fw-bold text-primary">$<%= price || '100.00' %></span>
+                                </div>
                             </div>
 
-                            <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold" id="payBtn">
-                                Proceed to PayPal Invoice
-                            </button>
+                            <!-- Card Preview -->
+                            <div class="cc-preview-wrapper">
+                                <div class="cc-card" id="ccCard">
+                                    <!-- Front -->
+                                    <div class="cc-front">
+                                        <div class="cc-chip">
+                                            <span></span><span></span><span></span><span></span>
+                                        </div>
+                                        <div class="cc-number" id="previewNumber">•••• •••• •••• ••••</div>
+                                        <div class="cc-bottom">
+                                            <div>
+                                                <div class="cc-label">Card Holder</div>
+                                                <div class="cc-value" id="previewName">FULL NAME</div>
+                                            </div>
+                                            <div>
+                                                <div class="cc-label">Expires</div>
+                                                <div class="cc-value" id="previewExpiry">MM/YY</div>
+                                            </div>
+                                            <div class="cc-network" id="previewNetwork">VISA</div>
+                                        </div>
+                                    </div>
+                                    <!-- Back -->
+                                    <div class="cc-back">
+                                        <div class="cc-magstrip"></div>
+                                        <div class="cc-label mb-1">CVV</div>
+                                        <div class="cc-cvv-strip" id="previewCvv">•••</div>
+                                        <div class="cc-back-network" id="previewNetworkBack">VISA</div>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <p class="text-center mt-3 text-muted" style="font-size: 0.85rem;">
-                                Secure payment powered by PayPal. <i class="fa fa-lock"></i>
+                            <!-- Card Form (Stripe Elements) -->
+                            <div class="card-input-group">
+                                <!-- Cardholder (for preview only) -->
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold text-muted">Cardholder Name</label>
+                                    <input type="text" class="form-control" id="cardName" placeholder="John Doe" autocomplete="cc-name">
+                                </div>
+
+                                <!-- Stripe Card Element -->
+                                <div class="mb-4">
+                                    <label class="form-label small fw-semibold text-muted">Card Details</label>
+                                    <div id="card-element" style="
+                                        border: 1.5px solid #dee2e6;
+                                        border-radius: 10px;
+                                        padding: 14px 16px;
+                                        background: #fff;
+                                        transition: border-color .2s, box-shadow .2s;
+                                    "></div>
+                                    <div id="card-errors" class="text-danger small mt-2" role="alert"></div>
+                                </div>
+
+                                <!-- Pay Button -->
+                                <button class="btn btn-primary text-white w-100 py-3 fw-semibold" id="payBtn">
+                                    <i class="fa fa-lock me-2"></i>
+                                    Pay $<%= price || '100.00' %> Securely
+                                </button>
+
+                                <p class="text-center mt-3 text-muted" style="font-size: 0.78rem;">
+                                    <i class="fa fa-shield me-1"></i> 256-bit SSL encrypted &nbsp;·&nbsp;
+                                    <i class="fa fa-lock me-1"></i> PCI DSS compliant
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- ═══ Processing State ═══ -->
+                        <div class="card-body p-5 text-center d-none" id="processing-content">
+                            <div class="spinner-border text-primary mb-4" style="width: 3rem; height: 3rem;"
+                                role="status">
+                                <span class="sr-only">Processing...</span>
+                            </div>
+                            <h4 class="mb-3">Processing Payment...</h4>
+                            <p class="text-muted">Please do not close this window. Your card is being verified securely.
                             </p>
                         </div>
 
-                        <!-- Processing State (Hidden) -->
-                        <div class="card-body p-5 text-center d-none" id="processing-content">
-                            <div class="spinner-border text-primary mb-4" style="width: 3rem; height: 3rem;" role="status">
-                                <span class="sr-only">Processing...</span>
-                            </div>
-                            <h4 class="mb-3">Generating PayPal Invoice...</h4>
-                            <p class="text-muted">Please do not close this window. We are processing your request with PayPal.</p>
-                        </div>
-
-                        <!-- Invoice Details State (Hidden) -->
+                        <!-- ═══ Invoice State ═══ -->
                         <div class="card-body p-4 d-none" id="invoice-content">
                             <div id="printable-invoice">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h4 class="text-primary m-0">INVOICE</h4>
-                                    <span class="text-muted">ID: #INV-<%= Math.floor(Math.random() * 90000) + 10000 %></span>
+                                    <span class="text-muted" id="invoiceIdDisplay"></span>
                                 </div>
                                 <div class="row mb-4">
                                     <div class="col-6">
                                         <h6 class="text-muted text-uppercase small">Bill From:</h6>
-                                        <p class="mb-0"><strong>Learnora Academy</strong><br>Jakarta International College<br>Letjen S. Parman St No.1AA, Slipi<br>West Jakarta City, Jakarta 11480</p>
+                                        <p class="mb-0"><strong>Learnora Academy</strong><br>Jakarta International
+                                            College<br>Letjen S. Parman St No.1AA, Slipi<br>West Jakarta City, Jakarta
+                                            11480</p>
                                     </div>
                                     <div class="col-6 text-end">
                                         <h6 class="text-muted text-uppercase small">Bill To:</h6>
-                                        <p class="mb-0"><strong id="invoiceUserName">Verified Student</strong><br>Verified PayPal User</p>
+                                        <p class="mb-0"><strong id="invoiceUserName">Verified Student</strong><br>Credit
+                                            Card Payment</p>
                                     </div>
                                 </div>
                                 <table class="table table-bordered mb-4">
@@ -72,74 +370,57 @@
                                     <tbody>
                                         <tr>
                                             <td><span id="invoiceCourseName"></span></td>
-                                            <td class="text-end">$<%= price || '100.00' %></td>
+                                            <td class="text-end">$<%= price || '100.00' %>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td class="text-end fw-bold">Total</td>
-                                            <td class="text-end fw-bold text-primary">$<%= price || '100.00' %></td>
+                                            <td class="text-end fw-bold text-primary">$<%= price || '100.00' %>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <div class="alert alert-success border-0 small py-2">
-                                    <i class="fa fa-check-circle me-1"></i> Status: **Paid via PayPal Invoice**
+                                    <i class="fa fa-check-circle me-1"></i> Status: <strong>Paid via Credit
+                                        Card</strong>
+                                    &nbsp;·&nbsp; Card ending in <strong id="invoiceCardLast4">••••</strong>
                                 </div>
                             </div>
-                            
+
                             <hr>
                             <div class="d-grid gap-2">
                                 <button class="btn btn-outline-secondary" onclick="window.print()">
                                     <i class="fa fa-file-pdf me-2"></i> Save as PDF
                                 </button>
                                 <button class="btn btn-primary" id="finishBtn">
-                                    Finish & Go to Dashboard
+                                    Finish &amp; Go to Dashboard
                                 </button>
                             </div>
                         </div>
-                    </div>
+
+                    </div><!-- /card -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Print Styling -->
-    <style>
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #printable-invoice, #printable-invoice * {
-                visibility: visible;
-            }
-            #printable-invoice {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                padding: 40px;
-                background: white;
-            }
-            .navbar, .footer, .back-to-top, .btn, hr {
-                display: none !important;
-            }
-        }
-    </style>
-
+    <!-- Stripe.js must load before Firebase scripts -->
+    <script src="https://js.stripe.com/v3/"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
     <script>
-        // Firebase Configuration - Passed from res.locals
+        // ── Firebase ──
         const firebaseConfig = <%- JSON.stringify(firebaseConfig) %>;
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.database();
+        const db   = firebase.database();
 
         let currentUser = null;
         const invoiceId = "#INV-" + (Math.floor(Math.random() * 90000) + 10000);
-        document.querySelector('.text-muted').innerText = "ID: " + invoiceId;
+        document.getElementById('invoiceIdDisplay').innerText = "ID: " + invoiceId;
 
-        // Check Auth and Get Name
         auth.onAuthStateChanged(user => {
             if (user) {
                 currentUser = user;
@@ -149,43 +430,132 @@
             }
         });
 
-        document.getElementById('payBtn').addEventListener('click', function() {
-            const course = document.getElementById('courseName').innerText;
-            const price = "<%= price || '100.00' %>";
-            document.getElementById('invoiceCourseName').innerText = course;
-            
-            // Show processing
-            document.getElementById('main-content').classList.add('d-none');
-            document.getElementById('processing-content').classList.remove('d-none');
+        // ── Stripe Setup ──
+        const stripe   = Stripe('<%= stripePublishableKey %>');
+        const elements = stripe.elements();
+        const cardElement = elements.create('card', {
+            style: {
+                base: {
+                    fontSize: '15px',
+                    color: '#32325d',
+                    fontFamily: '"Inter", "Helvetica Neue", Helvetica, sans-serif',
+                    '::placeholder': { color: '#aab7c4' }
+                },
+                invalid: { color: '#dc3545', iconColor: '#dc3545' }
+            }
+        });
+        cardElement.mount('#card-element');
 
-            // Simulate "Invoice Generation"
-            setTimeout(() => {
-                // Save to Database
-                if (currentUser) {
-                    const paymentData = {
-                        transactionId: invoiceId,
-                        courseName: course,
-                        amount: "$" + price,
-                        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-                        status: "Successful",
-                        timestamp: firebase.database.ServerValue.TIMESTAMP
-                    };
-
-                    db.ref('users/' + currentUser.uid + '/payments').push(paymentData)
-                        .then(() => {
-                            console.log("Payment recorded successfully");
-                        })
-                        .catch(err => {
-                            console.error("Error saving payment:", err);
-                        });
-                }
-
-                document.getElementById('processing-content').classList.add('d-none');
-                document.getElementById('invoice-content').classList.remove('d-none');
-            }, 3000);
+        // Highlight Stripe element border on focus/blur
+        cardElement.on('focus', () => {
+            document.getElementById('card-element').style.borderColor = '#4361ee';
+            document.getElementById('card-element').style.boxShadow  = '0 0 0 3px rgba(67,97,238,.15)';
+        });
+        cardElement.on('blur', () => {
+            document.getElementById('card-element').style.borderColor = '#dee2e6';
+            document.getElementById('card-element').style.boxShadow  = 'none';
+        });
+        cardElement.on('change', e => {
+            const errDiv = document.getElementById('card-errors');
+            errDiv.innerText = e.error ? e.error.message : '';
         });
 
-        document.getElementById('finishBtn').addEventListener('click', function() {
+        // ── Cardholder name → preview ──
+        document.getElementById('cardName').addEventListener('input', function () {
+            document.getElementById('previewName').innerText = this.value.toUpperCase() || 'FULL NAME';
+        });
+
+        // ── Pay Button ──
+        document.getElementById('payBtn').addEventListener('click', async function () {
+            const name    = document.getElementById('cardName').value.trim();
+            const errDiv  = document.getElementById('card-errors');
+            const price   = '<%= price || "100.00" %>';
+            const course  = document.getElementById('courseName').innerText.trim();
+
+            if (!name) {
+                errDiv.innerText = 'Please enter the cardholder name.';
+                return;
+            }
+
+            // Disable button & show processing
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Processing...';
+
+            try {
+                // 1. Ask server for a PaymentIntent client secret
+                const intentRes = await fetch('/create-payment-intent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: price })
+                });
+                const { clientSecret, error: intentError } = await intentRes.json();
+
+                if (intentError) {
+                    errDiv.innerText = intentError;
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fa fa-lock me-2"></i> Pay $' + price + ' Securely';
+                    return;
+                }
+
+                // 2. Show processing screen
+                document.getElementById('main-content').classList.add('d-none');
+                document.getElementById('processing-content').classList.remove('d-none');
+
+                // 3. Confirm payment with Stripe
+                const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: {
+                        card: cardElement,
+                        billing_details: { name }
+                    }
+                });
+
+                if (error) {
+                    // Payment failed — show error and go back to form
+                    document.getElementById('processing-content').classList.add('d-none');
+                    document.getElementById('main-content').classList.remove('d-none');
+                    errDiv.innerText = error.message;
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fa fa-lock me-2"></i> Pay $' + price + ' Securely';
+                    return;
+                }
+
+                // 4. Payment succeeded — save to Firebase
+                const last4 = paymentIntent.payment_method_types ? '••••' : '••••'; // Stripe doesn't expose last4 from client
+                document.getElementById('invoiceCourseName').innerText = course;
+                document.getElementById('invoiceCardLast4').innerText  = last4;
+
+                if (currentUser) {
+                    const paymentData = {
+                        transactionId: paymentIntent.id,
+                        invoiceRef:    invoiceId,
+                        courseName:    course,
+                        amount:        '$' + price,
+                        date:          new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                        status:        'Successful',
+                        method:        'Credit Card',
+                        stripeStatus:  paymentIntent.status,
+                        timestamp:     firebase.database.ServerValue.TIMESTAMP
+                    };
+                    db.ref('users/' + currentUser.uid + '/payments').push(paymentData)
+                        .then(() => console.log('Payment recorded in Firebase'))
+                        .catch(err => console.error('Firebase error:', err));
+                }
+
+                // 5. Show invoice
+                document.getElementById('processing-content').classList.add('d-none');
+                document.getElementById('invoice-content').classList.remove('d-none');
+
+            } catch (err) {
+                errDiv.innerText = 'An unexpected error occurred. Please try again.';
+                console.error(err);
+                this.disabled = false;
+                this.innerHTML = '<i class="fa fa-lock me-2"></i> Pay $' + price + ' Securely';
+                document.getElementById('processing-content').classList.add('d-none');
+                document.getElementById('main-content').classList.remove('d-none');
+            }
+        });
+
+        document.getElementById('finishBtn').addEventListener('click', function () {
             window.location.href = '/dashboard';
         });
     </script>

@@ -149,7 +149,28 @@
         (function() {
             // Configuration injected from the server
             const firebaseConfig = JSON.parse(document.getElementById('firebase-config').textContent);
+            const COOKIE_DOMAIN = "<%= typeof cookieDomain !== 'undefined' ? cookieDomain : '' %>";
             
+            // Cookie Helper
+            const setCookie = (name, value, days = 7) => {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                let expires = "; expires=" + date.toUTCString();
+                let domain = COOKIE_DOMAIN ? "; domain=" + COOKIE_DOMAIN : "";
+                document.cookie = name + "=" + (value || "") + expires + domain + "; path=/";
+            };
+
+            const getCookie = (name) => {
+                const nameEQ = name + "=";
+                const ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            };
+
             // Initialize Firebase if not already initialized
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
@@ -183,13 +204,13 @@
                 }
             }
 
-            // --- FLICKER PREVENTION: Immediate UI update from Cache ---
-            const cachedState = localStorage.getItem('learnora_auth_state');
+            // --- FLICKER PREVENTION: Immediate UI update from Cache (Now using Cookies) ---
+            const cachedState = getCookie('learnora_auth_state');
             updateUI(cachedState === 'in');
 
             auth.onAuthStateChanged((user) => {
                 if (user) {
-                    localStorage.setItem('learnora_auth_state', 'in');
+                    setCookie('learnora_auth_state', 'in');
                     updateUI(true);
                     
                     // Update Name
@@ -200,7 +221,7 @@
 
                     updateCartBadge(user.uid);
                 } else {
-                    localStorage.setItem('learnora_auth_state', 'out');
+                    setCookie('learnora_auth_state', 'out');
                     updateUI(false);
                     if (cartBadge) cartBadge.style.display = 'none';
                 }
@@ -224,7 +245,7 @@
             window.enrollCourse = function(courseId, courseName, price) {
                 const user = auth.currentUser;
                 if (!user) {
-                    localStorage.setItem('redirect_after_auth', window.location.pathname);
+                    setCookie('redirect_after_auth', window.location.pathname);
                     window.location.href = '/auth';
                     return;
                 }

@@ -88,7 +88,7 @@
             if (user) {
                 loadCart(user.uid);
             } else {
-                localStorage.setItem('redirect_after_auth', '/cart');
+                setCookie('redirect_after_auth', '/cart');
                 window.location.href = '/auth';
             }
         });
